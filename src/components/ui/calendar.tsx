@@ -1,35 +1,35 @@
-'use client'
+"use client";
 
-import * as React from "react"
-import { ChevronLeft, ChevronRight } from 'lucide-react'
-import { 
-  format, 
-  addMonths, 
-  subMonths, 
-  startOfMonth, 
-  endOfMonth, 
-  eachDayOfInterval, 
-  isSameMonth, 
-  isSameDay, 
-  isToday, 
+import * as React from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  format,
+  addMonths,
+  subMonths,
+  startOfMonth,
+  endOfMonth,
+  eachDayOfInterval,
+  isSameMonth,
+  isSameDay,
+  isToday,
   startOfWeek,
-  endOfWeek 
-} from "date-fns"
-import { enUS, fr, es, de, it } from 'date-fns/locale'
+  endOfWeek
+} from "date-fns";
+import { enUS, fr, es, de, it } from "date-fns/locale";
 
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
-import { useLanguage } from "@/utils/languageHandler"
-import dashboardText from "@/locales/dashboardText"
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { useLanguage } from "@/utils/languageHandler";
+import dashboardText from "@/locales/dashboardText";
 import colors from "@/app/theme/colors";
 
 interface CalendarProps {
-  mode?: "single"
-  selected?: Date
-  onSelect?: (date: Date) => void
-  className?: string
-  specialDates?: Date[]
-  theme?: "white" | "dark"
+  mode?: "single";
+  selected?: Date;
+  onSelect?: (date: Date) => void;
+  className?: string;
+  specialDates?: Date[];
+  theme?: "white" | "dark";
 }
 
 const localeMap = {
@@ -37,19 +37,22 @@ const localeMap = {
   fr: fr,
   es: es,
   de: de,
-  it: it,
+  it: it
 };
 
-export function Calendar({ 
+export function Calendar({
   selected,
-  onSelect, 
+  onSelect,
   className,
   specialDates = [],
-  theme = "white",
+  theme = "white"
 }: CalendarProps) {
   const [currentMonth, setCurrentMonth] = React.useState(new Date());
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const [containerSize, setContainerSize] = React.useState({ width: 0, height: 0 });
+  const [containerSize, setContainerSize] = React.useState({
+    width: 0,
+    height: 0
+  });
   const { language } = useLanguage();
   const t = dashboardText[language] || dashboardText.en;
 
@@ -66,8 +69,8 @@ export function Calendar({
     };
 
     updateSize();
-    window.addEventListener('resize', updateSize);
-    return () => window.removeEventListener('resize', updateSize);
+    window.addEventListener("resize", updateSize);
+    return () => window.removeEventListener("resize", updateSize);
   }, []);
 
   const firstDayOfMonth = startOfMonth(currentMonth);
@@ -84,34 +87,38 @@ export function Calendar({
     if (onSelect) {
       onSelect(day);
     }
-  }
+  };
 
   const isSpecialDate = (date: Date) => {
-    return specialDates.some(specialDate => isSameDay(specialDate, date));
-  }
+    return specialDates.some((specialDate) => isSameDay(specialDate, date));
+  };
 
   const formatMonth = (date: Date) => {
     const monthIndex = date.getMonth();
     const year = date.getFullYear();
     return `${t.months[monthIndex]} ${year}`;
-  }
+  };
 
-  const fontSize = Math.min(containerSize.width / 25, containerSize.height / 25);
+  const fontSize = Math.min(
+    containerSize.width / 25,
+    containerSize.height / 25
+  );
   const monthFontSize = fontSize * 1.3;
 
   return (
-    <div ref={containerRef} className={cn("w-full h-full flex flex-col", className)} style={{ fontSize: `${fontSize}px` }}>
+    <div
+      ref={containerRef}
+      className={cn("w-full h-full flex flex-col", className)}
+      style={{ fontSize: `${fontSize}px` }}
+    >
       <div className="flex items-center justify-between mb-2 px-2">
-        <Button 
-          onClick={handlePreviousMonth} 
-          variant="ghost" 
-          size="icon" 
-          className="h-auto w-auto p-1 hover:bg-transparent"
+        <Button
+          onClick={handlePreviousMonth}
+          variant="ghost"
+          size="icon"
+          className="h-auto w-auto p-1 hover:bg-primary/10"
           style={{
-            color: themeColors.calendarButtonIconColor,
-    hover: {
-      backgroundColor: themeColors.buttonPrimaryHover,
-    },
+            color: themeColors.calendarButtonIconColor
           }}
         >
           <ChevronLeft className="h-6 w-6" />
@@ -119,24 +126,20 @@ export function Calendar({
         </Button>
         <div
           className="text-xl font-medium"
-          style={{ 
+          style={{
             fontSize: `${monthFontSize}px`,
-            color: themeColors.calendarMonthText,
+            color: themeColors.calendarMonthText
           }}
         >
           {formatMonth(currentMonth)}
         </div>
-        <Button 
-          onClick={handleNextMonth} 
-          variant="ghost" 
-          size="icon" 
-          className="h-auto w-auto p-1 hover:bg-transparent"
+        <Button
+          onClick={handleNextMonth}
+          variant="ghost"
+          size="icon"
+          className="h-auto w-auto p-1 hover:bg-primary/10"
           style={{
-            color: themeColors.calendarButtonIconColor,
-            hover: {
-              color: themeColors.calendarButtonHoverText,
-              backgroundColor: themeColors.calendarButtonHoverBackground,
-            }
+            color: themeColors.calendarButtonIconColor
           }}
         >
           <ChevronRight className="h-6 w-6" />
@@ -144,13 +147,13 @@ export function Calendar({
         </Button>
       </div>
       <div className="grid grid-cols-7 gap-0 mb-0 px-0 -mx-1">
-        {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day, index) => (
-          <div 
-            key={index} 
+        {["Do", "Lu", "Ma", "Me", "Gi", "Ve", "Sa"].map((day, index) => (
+          <div
+            key={index}
             className="font-normal flex items-center pl-3"
-            style={{ 
-              fontSize: '1em',
-              color: themeColors.calendarDayNameText,
+            style={{
+              fontSize: "1em",
+              color: themeColors.calendarDayNameText
             }}
           >
             {day}
@@ -164,26 +167,27 @@ export function Calendar({
           const isCurrentDay = isToday(day);
           const isSpecial = isSpecialDate(day);
 
-          const scaleFactor = 1 + (containerSize.width / 2000);
+          const scaleFactor = 1 + containerSize.width / 2000;
 
           const dayStyle: React.CSSProperties = {
-            transform: isSelected ? `scale(${scaleFactor})` : 'scale(1)',
-            zIndex: isSelected ? 10 : 'auto',
-            color: themeColors.text,
+            transform: isSelected ? `scale(${scaleFactor})` : "scale(1)",
+            zIndex: isSelected ? 10 : "auto",
+            color: themeColors.text
           };
-          
+
           if (!isCurrentMonth) {
             dayStyle.color = themeColors.calendarNotCurrentMonthText;
           }
-          
+
           if (isSelected) {
-            dayStyle.backgroundColor = themeColors.calendarSelectedDayBackground;
+            dayStyle.backgroundColor =
+              themeColors.calendarSelectedDayBackground;
             dayStyle.color = themeColors.calendarSelectedDayText;
           } else if (isCurrentDay) {
             dayStyle.backgroundColor = themeColors.calendarTodayBackground;
             dayStyle.color = themeColors.calendarTodayText;
           }
-          
+
           if (isSpecial) {
             dayStyle.color = themeColors.calendarSpecialDateText;
           }
@@ -198,7 +202,7 @@ export function Calendar({
                 "hover:bg-transparent"
               )}
               style={{
-                ...dayStyle,
+                ...dayStyle
               }}
             >
               {format(day, "d", { locale: localeMap[language] })}

@@ -84,8 +84,8 @@ export interface ThemeColors {
       buttonLinkHover: "#fe9d3a",
 
       calendarButtonHoverText: "#D1D5DB",
-      calendarMonthText: "#F3F2F1",
-      calendarDayNameText: "#9CA3AF",
+      calendarMonthText: "#374151",
+      calendarDayNameText: "#4394E5",
       calendarNotCurrentMonthText: "#6B7280",
       calendarSelectedDayBackground: "#ff73b4",
       calendarSelectedDayText: "#F3F2F1",
@@ -93,7 +93,7 @@ export interface ThemeColors {
       calendarTodayText: "#374151",
       calendarSpecialDateText: "#F87171",
       calendarDayHoverBackground: "#374151",
-      calendarButtonIconColor: "#9CA3AF",
+      calendarButtonIconColor: "#374151",
       calendarButtonHoverBackground: "transparent",
 
     },
