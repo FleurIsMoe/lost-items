@@ -21,6 +21,8 @@ import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useLanguage } from "@/utils/languageHandler"
 import dashboardText from "@/locales/dashboardText"
+import colors from "@/app/theme/colors";
+import styled from "styled-components";
 
 interface CalendarProps {
   mode?: "single"
@@ -28,6 +30,7 @@ interface CalendarProps {
   onSelect?: (date: Date) => void
   className?: string
   specialDates?: Date[]
+  theme?: "white" | "dark"
 }
 
 const localeMap = {
@@ -42,13 +45,16 @@ export function Calendar({
   selected,
   onSelect, 
   className,
-  specialDates = [] 
+  specialDates = [],
+  theme = "white",
 }: CalendarProps) {
   const [currentMonth, setCurrentMonth] = React.useState(new Date());
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = React.useState({ width: 0, height: 0 });
   const { language } = useLanguage();
   const t = dashboardText[language] || dashboardText.en;
+
+  const themeColors = colors[theme];
 
   React.useEffect(() => {
     const updateSize = () => {
@@ -91,8 +97,8 @@ export function Calendar({
     return `${t.months[monthIndex]} ${year}`;
   }
 
-  // Dynamic font size calculation based on container dimensions
   const fontSize = Math.min(containerSize.width / 25, containerSize.height / 25);
+  const monthFontSize = fontSize * 1.3;
 
   return (
     <div ref={containerRef} className={cn("w-full h-full flex flex-col", className)} style={{ fontSize: `${fontSize}px` }}>
@@ -101,19 +107,38 @@ export function Calendar({
           onClick={handlePreviousMonth} 
           variant="ghost" 
           size="icon" 
-          className="h-auto w-auto p-1 hover:bg-transparent hover:text-gray-600"
+          className="h-auto w-auto p-1 hover:bg-transparent"
+          style={{
+            color: themeColors.calendarButtonIconColor,
+    hover: {
+      backgroundColor: themeColors.buttonPrimaryHover,
+    },
+          }}
         >
           <ChevronLeft className="h-6 w-6" />
           <span className="sr-only">Previous month</span>
         </Button>
-        <div className="text-xl font-medium">
+        <div
+          className="text-xl font-medium"
+          style={{ 
+            fontSize: `${monthFontSize}px`,
+            color: themeColors.calendarMonthText,
+          }}
+        >
           {formatMonth(currentMonth)}
         </div>
         <Button 
           onClick={handleNextMonth} 
           variant="ghost" 
           size="icon" 
-          className="h-auto w-auto p-1 hover:bg-transparent hover:text-gray-600"
+          className="h-auto w-auto p-1 hover:bg-transparent"
+          style={{
+            color: themeColors.calendarButtonIconColor,
+            hover: {
+              color: themeColors.calendarButtonHoverText,
+              backgroundColor: themeColors.calendarButtonHoverBackground,
+            }
+          }}
         >
           <ChevronRight className="h-6 w-6" />
           <span className="sr-only">Next month</span>
@@ -123,8 +148,11 @@ export function Calendar({
         {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day, index) => (
           <div 
             key={index} 
-            className="font-normal text-gray-400 flex items-center pl-3"
-            style={{ fontSize: '1em' }}
+            className="font-normal flex items-center pl-3"
+            style={{ 
+              fontSize: '1em',
+              color: themeColors.calendarDayNameText,
+            }}
           >
             {day}
           </div>
@@ -136,21 +164,43 @@ export function Calendar({
           const isCurrentMonth = isSameMonth(day, currentMonth);
           const isCurrentDay = isToday(day);
           const isSpecial = isSpecialDate(day);
-          
+
+          const scaleFactor = 1 + (containerSize.width / 2000);
+
+          let dayStyle: React.CSSProperties = {
+            transform: isSelected ? `scale(${scaleFactor})` : 'scale(1)',
+            zIndex: isSelected ? 10 : 'auto',
+            color: themeColors.text,
+          };
+
+          if (!isCurrentMonth) {
+            dayStyle.color = themeColors.calendarNotCurrentMonthText;
+          }
+
+          if (isSelected) {
+            dayStyle.backgroundColor = themeColors.calendarSelectedDayBackground;
+            dayStyle.color = themeColors.calendarSelectedDayText;
+          } else if (isCurrentDay) {
+            dayStyle.backgroundColor = themeColors.calendarTodayBackground;
+            dayStyle.color = themeColors.calendarTodayText;
+          }
+
+          if (isSpecial) {
+            dayStyle.color = themeColors.calendarSpecialDateText;
+          }
+
           return (
             <Button
               key={day.toString()}
               onClick={() => handleDateSelect(day)}
               variant="ghost"
               className={cn(
-                "p-0 flex items-center justify-center aspect-square",
-                !isCurrentMonth && "text-gray-300",
-                isSelected && "bg-[#ff73b4] text-white hover:bg-[#ff73b4] hover:text-white",
-                isCurrentDay && !isSelected && "bg-gray-100",
-                isSpecial && "text-red-500",
-                "hover:text-inherit hover:bg-gray-100"
+                "p-1 flex items-center justify-center aspect-square text-sm",
+                "hover:bg-transparent"
               )}
-              style={{ fontSize: '1em' }}
+              style={{
+                ...dayStyle,
+              }}
             >
               {format(day, "d", { locale: localeMap[language] })}
             </Button>

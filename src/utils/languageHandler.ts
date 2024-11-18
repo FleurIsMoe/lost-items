@@ -12,7 +12,7 @@ interface LocationData {
   country_code: string;
 }
 
-const CACHE_DURATION = 60 * 60 * 1000; // 1 hour in milliseconds
+const CACHE_DURATION = 60 * 60 * 1000;
 
 export const useLanguage = () => {
   const [language, setLanguage] = useState<Language>('en');

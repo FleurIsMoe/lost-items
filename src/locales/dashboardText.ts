@@ -1,4 +1,6 @@
-type Language = 
+import { ReactNode } from 'react';
+
+type Language =
   | 'en'
   | 'it'
   | 'fr'
@@ -6,6 +8,7 @@ type Language =
   | 'de';
 
 interface DashboardText {
+  [key: string]: ReactNode | Record<string, string> | string[];
   title: string;
   stats: {
     total: string;
@@ -29,6 +32,8 @@ interface DashboardText {
   pending: string;
   found: string;
   markAsFound: string;
+  editItem: string;
+  editLostItem: string;
   deleteItem: string;
   deleteConfirmTitle: string;
   deleteConfirmYes: string;
@@ -37,7 +42,6 @@ interface DashboardText {
   currentlyShowing: string;
   items: string;
   notifications: {
-    [x: string]: string;
     title: string;
     noNotifications: string;
     clearAll: string;
@@ -45,6 +49,8 @@ interface DashboardText {
     itemDeleted: string;
     itemDeletedDetails: string;
     itemStatusChanged: string;
+    itemFound: string;
+    itemLost: string;
   };
   itemsForDate: string;
   search: {
@@ -54,6 +60,13 @@ interface DashboardText {
     clearSearch: string;
   };
   months: string[];
+  settings: string;
+  settingsDescription: string;
+  retentionTime: string;
+  saveSettings: string;
+  day: string;
+  month: string;
+  year: string;
 }
 
 const dashboardText: Record<Language, DashboardText> = {
@@ -81,6 +94,8 @@ const dashboardText: Record<Language, DashboardText> = {
     pending: "Pending",
     found: "Found",
     markAsFound: "Mark as Found",
+    editItem: "Edit",
+    editLostItem: "Edit Lost Item",
     deleteItem: "Delete",
     deleteConfirmTitle: "Are you sure?",
     deleteConfirmYes: "Yes",
@@ -96,6 +111,8 @@ const dashboardText: Record<Language, DashboardText> = {
       itemDeleted: "Item Deleted",
       itemDeletedDetails: "An item titled '{title}' was deleted on {date}.",
       itemStatusChanged: "An item titled '{title}' was changed to '{status}' on {date}.",
+      itemFound: "Item Retrieved",
+      itemLost: "Item in Custody",
     },
     itemsForDate: "Items for",
     search: {
@@ -104,7 +121,15 @@ const dashboardText: Record<Language, DashboardText> = {
       resultsCount: "{count} items found across {dates} dates",
       clearSearch: "Clear search",
     },
+
     months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+    settings: "Settings",
+    settingsDescription: "Change your settings here",
+    retentionTime: "Item deletion time ",
+    saveSettings: "Save settings",
+    day: "Day(s)",
+    month: "Month(s)",
+    year: "Year(s)",
   },
   it: {
     title: "Oggetti Persi",
@@ -130,6 +155,8 @@ const dashboardText: Record<Language, DashboardText> = {
     pending: "In Attesa",
     found: "Ritirati",
     markAsFound: "Segna come Trovato",
+    editItem: "Modifica",
+    editLostItem: "Modifica l'oggetto perso",
     deleteItem: "Elimina",
     deleteConfirmTitle: "Sei sicuro?",
     deleteConfirmYes: "Sì",
@@ -144,7 +171,9 @@ const dashboardText: Record<Language, DashboardText> = {
       markAsSeen: "Segna come Letto",
       itemDeleted: "Oggetto Eliminato",
       itemDeletedDetails: "Un oggetto intitolato '{title}' è stato eliminato il {date}.",
-      itemStatusChanged: "Un oggetto intitolato '{title}' in categoria '{category}' è stato segnato come {status} il {date}."
+      itemStatusChanged: "Un oggetto intitolato '{title}' in categoria '{category}' è stato segnato come {status} il {date}.",
+      itemFound: "Oggetto Ritirato",
+      itemLost: "Oggetto In Custodia",
     },
     itemsForDate: "Oggetti per",
     search: {
@@ -154,8 +183,15 @@ const dashboardText: Record<Language, DashboardText> = {
       clearSearch: "Cancella Ricerca",
     },
     months: ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"],
+    settings: "Impostazioni",
+    settingsDescription: "Modifica le tue impostazioni qui",
+    retentionTime: "Tempo di rimozione degli oggetti",
+    saveSettings: "Salva impostazioni",
+    day: "Giorni",
+    month: "Mesi",
+    year: "Anni",
   },
-    fr: {
+  fr: {
     title: "Objets Perdus",
     stats: {
       total: "Total des Objets",
@@ -170,7 +206,7 @@ const dashboardText: Record<Language, DashboardText> = {
     formDesc: "Description",
     formLocation: "Emplacement",
     formRoom: "Chambre",
-    formSubmit:"Soumettre",
+    formSubmit: "Soumettre",
     charts: {
       status: "Objets par Statut",
       trend: "Tendance des Objets",
@@ -179,6 +215,8 @@ const dashboardText: Record<Language, DashboardText> = {
     pending: "En Attente",
     found: "Trouvés",
     markAsFound: "Marquer comme Trouvé",
+    editItem: "Modifier",
+    editLostItem: "Modifier l'objet perdu",
     deleteItem: "Supprimer",
     deleteConfirmTitle: "Êtes-vous sûr ?",
     deleteConfirmYes: "Oui",
@@ -193,7 +231,9 @@ const dashboardText: Record<Language, DashboardText> = {
       markAsSeen: "Marquer comme vu",
       itemDeleted: "Objet Supprimé",
       itemDeletedDetails: "Un objet intitulé '{title}' a été supprimé le {date}.",
-      itemStatusChanged: "Un objet intitulé '{title}' dans la categorie '{category}' a été marqué comme {status} le {date}."
+      itemStatusChanged: "Un objet intitulé '{title}' dans la categorie '{category}' a été marqué comme {status} le {date}.",
+      itemFound: "Objet Trouvé",
+      itemLost: "Objet Perdu",
     },
     itemsForDate: "Objets pour",
     search: {
@@ -203,6 +243,13 @@ const dashboardText: Record<Language, DashboardText> = {
       clearSearch: "Effacer la recherche",
     },
     months: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
+    settings: "Paramètres",
+    settingsDescription: "Modifiez vos paramètres ici",
+    retentionTime: "Délai de suppression des objets",
+    saveSettings: "Enregistrer les paramètres",
+    day: "Jours",
+    month: "Mois",
+    year: "Ans",
   },
   es: {
     title: "Objetos Perdidos",
@@ -228,6 +275,8 @@ const dashboardText: Record<Language, DashboardText> = {
     pending: "Pendientes",
     found: "Encontrados",
     markAsFound: "Marcar como Encontrado",
+    editItem: "Editar",
+    editLostItem: "Editar Objeto Perdido",
     deleteItem: "Eliminar",
     deleteConfirmTitle: "¿Estás seguro?",
     deleteConfirmYes: "Sí",
@@ -242,7 +291,9 @@ const dashboardText: Record<Language, DashboardText> = {
       markAsSeen: "Marcar como visto",
       itemDeleted: "Objeto Eliminado",
       itemDeletedDetails: "Un objeto titulado '{title}' fue eliminado el {date}.",
-      itemStatusChanged: "Un objeto titulado '{title}' en la categoria '{category}' fue marcado como {status} el {date}."
+      itemStatusChanged: "Un objeto titulado '{title}' en la categoria '{category}' fue marcado como {status} el {date}.",
+      itemFound: "Objeto Encontrado",
+      itemLost: "Objeto Perdido",
     },
     itemsForDate: "Objetos para",
     search: {
@@ -252,6 +303,13 @@ const dashboardText: Record<Language, DashboardText> = {
       clearSearch: "Borrar búsqueda",
     },
     months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+    settings: "Ajustes",
+    settingsDescription: "Cambia tus ajustes aqui",
+    retentionTime: "Tiempo de retención de objetos",
+    saveSettings: "Guardar Ajustes",
+    day: "Días",
+    month: "Meses",
+    year: "Años",
   },
   de: {
     title: "Verlorene Gegenstände",
@@ -277,6 +335,8 @@ const dashboardText: Record<Language, DashboardText> = {
     pending: "Ausstehend",
     found: "Gefunden",
     markAsFound: "Als gefunden markieren",
+    editItem: "Bearbeiten",
+    editLostItem: "Verlorene Gegenstand bearbeiten",
     deleteItem: "Löschen",
     deleteConfirmTitle: "Sind Sie sicher?",
     deleteConfirmYes: "Ja",
@@ -291,7 +351,9 @@ const dashboardText: Record<Language, DashboardText> = {
       markAsSeen: "Als gesehen markieren",
       itemDeleted: "Gegenstand gelöscht",
       itemDeletedDetails: "Ein Gegenstand mit dem Titel '{title}' wurde am {date} gelöscht.",
-      itemStatusChanged: "Ein Gegenstand mit dem Titel '{title}' in der Kategorie '{category}' wurde am {date} als '{status}' markiert."
+      itemStatusChanged: "Ein Gegenstand mit dem Titel '{title}' in der Kategorie '{category}' wurde am {date} als '{status}' markiert.",
+      itemFound: "Gegenstand gefunden", 
+      itemLost: "Verlorene Gegenstand", 
     },
     itemsForDate: "Gegenstände für",
     search: {
@@ -301,6 +363,13 @@ const dashboardText: Record<Language, DashboardText> = {
       clearSearch: "Suche löschen",
     },
     months: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
+    settings: "Einstellungen",
+    settingsDescription: "Hier kannst du deine Einstellungen einstellen",
+    retentionTime: "Verlustzeit",
+    saveSettings: "Einstellungen speichern",
+    day: "Tage",
+    month: "Monate",
+    year: "Jahre",
   },
 };
 
