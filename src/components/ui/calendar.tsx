@@ -39,8 +39,7 @@ const localeMap = {
 };
 
 export function Calendar({ 
-  mode = "single", 
-  selected, 
+  selected,
   onSelect, 
   className,
   specialDates = [] 

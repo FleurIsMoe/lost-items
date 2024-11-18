@@ -23,7 +23,6 @@ import {
   Menu,
   Plus,
   Search,
-  Trash2,
   X,
 } from "lucide-react";
 import {
@@ -39,7 +38,7 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -62,7 +61,6 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";

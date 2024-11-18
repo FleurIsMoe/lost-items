@@ -22,7 +22,7 @@ const languages: Record<Language, string> = {
   de: "Deutsch",
 };
 
-export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ currentLanguage, onLanguageChange }) => {
+export const LanguageSelector: React.FC<LanguageSelectorProps> = ({ onLanguageChange }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
