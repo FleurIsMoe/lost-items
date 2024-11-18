@@ -1,3 +1,5 @@
+'use client'
+
 import * as React from "react"
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { 
@@ -13,9 +15,12 @@ import {
   startOfWeek,
   endOfWeek 
 } from "date-fns"
+import { enUS, fr, es, de, it } from 'date-fns/locale'
 
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { useLanguage } from "@/utils/languageHandler"
+import dashboardText from "@/locales/dashboardText"
 
 interface CalendarProps {
   mode?: "single"
@@ -25,6 +30,14 @@ interface CalendarProps {
   specialDates?: Date[]
 }
 
+const localeMap = {
+  en: enUS,
+  fr: fr,
+  es: es,
+  de: de,
+  it: it,
+};
+
 export function Calendar({ 
   mode = "single", 
   selected, 
@@ -32,64 +45,93 @@ export function Calendar({
   className,
   specialDates = [] 
 }: CalendarProps) {
-  const [currentMonth, setCurrentMonth] = React.useState(new Date())
+  const [currentMonth, setCurrentMonth] = React.useState(new Date());
+  const containerRef = React.useRef<HTMLDivElement>(null);
+  const [containerSize, setContainerSize] = React.useState({ width: 0, height: 0 });
+  const { language } = useLanguage();
+  const t = dashboardText[language] || dashboardText.en;
 
-  const firstDayOfMonth = startOfMonth(currentMonth)
-  const lastDayOfMonth = endOfMonth(currentMonth)
-  const calendarStart = startOfWeek(firstDayOfMonth)
-  const calendarEnd = endOfWeek(lastDayOfMonth)
+  React.useEffect(() => {
+    const updateSize = () => {
+      if (containerRef.current) {
+        setContainerSize({
+          width: containerRef.current.offsetWidth,
+          height: containerRef.current.offsetHeight
+        });
+      }
+    };
 
-  const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd })
+    updateSize();
+    window.addEventListener('resize', updateSize);
+    return () => window.removeEventListener('resize', updateSize);
+  }, []);
 
-  const handlePreviousMonth = () => setCurrentMonth(subMonths(currentMonth, 1))
-  const handleNextMonth = () => setCurrentMonth(addMonths(currentMonth, 1))
+  const firstDayOfMonth = startOfMonth(currentMonth);
+  const lastDayOfMonth = endOfMonth(currentMonth);
+  const calendarStart = startOfWeek(firstDayOfMonth);
+  const calendarEnd = endOfWeek(lastDayOfMonth);
+
+  const days = eachDayOfInterval({ start: calendarStart, end: calendarEnd });
+
+  const handlePreviousMonth = () => setCurrentMonth(subMonths(currentMonth, 1));
+  const handleNextMonth = () => setCurrentMonth(addMonths(currentMonth, 1));
 
   const handleDateSelect = (day: Date) => {
     if (onSelect) {
-      onSelect(day)
+      onSelect(day);
     }
   }
 
   const isSpecialDate = (date: Date) => {
-    return specialDates.some(specialDate => isSameDay(specialDate, date))
+    return specialDates.some(specialDate => isSameDay(specialDate, date));
   }
 
+  const formatMonth = (date: Date) => {
+    const monthIndex = date.getMonth();
+    const year = date.getFullYear();
+    return `${t.months[monthIndex]} ${year}`;
+  }
+
+  // Dynamic font size calculation based on container dimensions
+  const fontSize = Math.min(containerSize.width / 25, containerSize.height / 25);
+
   return (
-    <div className={cn("w-full max-w-[280px] p-4", className)}>
-      <div className="flex items-center justify-between mb-4">
+    <div ref={containerRef} className={cn("w-full h-full flex flex-col", className)} style={{ fontSize: `${fontSize}px` }}>
+      <div className="flex items-center justify-between mb-2 px-2">
         <Button 
           onClick={handlePreviousMonth} 
           variant="ghost" 
           size="icon" 
-          className="h-7 w-7 hover:bg-transparent hover:text-gray-600"
+          className="h-auto w-auto p-1 hover:bg-transparent hover:text-gray-600"
         >
-          <ChevronLeft className="h-4 w-4" />
+          <ChevronLeft className="h-6 w-6" />
           <span className="sr-only">Previous month</span>
         </Button>
-        <div className="text-sm font-medium">
-          {format(currentMonth, "MMMM yyyy")}
+        <div className="text-xl font-medium">
+          {formatMonth(currentMonth)}
         </div>
         <Button 
           onClick={handleNextMonth} 
           variant="ghost" 
           size="icon" 
-          className="h-7 w-7 hover:bg-transparent hover:text-gray-600"
+          className="h-auto w-auto p-1 hover:bg-transparent hover:text-gray-600"
         >
-          <ChevronRight className="h-4 w-4" />
+          <ChevronRight className="h-6 w-6" />
           <span className="sr-only">Next month</span>
         </Button>
       </div>
-      <div className="grid grid-cols-7 gap-1 mb-2">
-        {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day) => (
+      <div className="grid grid-cols-7 gap-0 mb-0 px-0 -mx-1">
+        {["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"].map((day, index) => (
           <div 
-            key={day} 
-            className="text-center text-xs font-normal text-gray-500 h-8 flex items-center justify-center"
+            key={index} 
+            className="font-normal text-gray-400 flex items-center pl-3"
+            style={{ fontSize: '1em' }}
           >
             {day}
           </div>
         ))}
       </div>
-      <div className="grid grid-cols-7 gap-1">
+      <div className="grid grid-cols-7 gap-0 flex-grow px-0 -mx-1">
         {days.map((day) => {
           const isSelected = selected && isSameDay(day, selected);
           const isCurrentMonth = isSameMonth(day, currentMonth);
@@ -102,19 +144,20 @@ export function Calendar({
               onClick={() => handleDateSelect(day)}
               variant="ghost"
               className={cn(
-                "h-8 w-8 p-0 font-normal text-sm hover:bg-gray-100",
+                "p-0 flex items-center justify-center aspect-square",
                 !isCurrentMonth && "text-gray-300",
-                isSelected && "bg-black text-white hover:bg-black hover:text-white",
-                isCurrentDay && !isSelected && "bg-gray-200",
+                isSelected && "bg-[#ff73b4] text-white hover:bg-[#ff73b4] hover:text-white",
+                isCurrentDay && !isSelected && "bg-gray-100",
                 isSpecial && "text-red-500",
-                "hover:text-inherit"
+                "hover:text-inherit hover:bg-gray-100"
               )}
+              style={{ fontSize: '1em' }}
             >
-              {format(day, "d")}
+              {format(day, "d", { locale: localeMap[language] })}
             </Button>
           );
         })}
       </div>
     </div>
-  )
+  );
 }
