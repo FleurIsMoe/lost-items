@@ -1,6 +1,6 @@
-'use client'
+"use client";
 
-import * as React from "react"
+import * as React from "react";
 import {
   addDays,
   format,
@@ -9,9 +9,23 @@ import {
   parseISO,
   startOfDay,
   subDays,
-} from "date-fns"
-import { de, enUS, es, fr, it } from "date-fns/locale"
-import { Bell, CalendarIcon, Check, ChevronLeft, ChevronRight, DoorClosed, FolderOpen, MapPin, Menu, Plus, Search, Trash2, X } from 'lucide-react'
+} from "date-fns";
+import { de, enUS, es, fr, it } from "date-fns/locale";
+import {
+  Bell,
+  CalendarIcon,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  DoorClosed,
+  FolderOpen,
+  MapPin,
+  Menu,
+  Plus,
+  Search,
+  Trash2,
+  X,
+} from "lucide-react";
 import {
   Area,
   AreaChart,
@@ -24,18 +38,18 @@ import {
   Tooltip,
   XAxis,
   YAxis,
-} from "recharts"
-import { AnimatePresence, motion } from "framer-motion"
+} from "recharts";
+import { AnimatePresence, motion } from "framer-motion";
 
-import { Button } from "@/components/ui/button"
-import { Calendar } from "@/components/ui/calendar"
+import { Button } from "@/components/ui/button";
+import { Calendar } from "@/components/ui/calendar";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogClose,
@@ -44,52 +58,52 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Toggle } from "@/components/ui/toggle"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Skeleton } from "@/components/ui/skeleton"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { cn } from "@/lib/utils"
-import { useLanguage } from "@/utils/languageHandler"
-import { LanguageSelector } from "@/components/LanguageSelector"
-import dashboardText from "@/locales/dashboardText"
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Toggle } from "@/components/ui/toggle";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
+import { useLanguage } from "@/utils/languageHandler";
+import { LanguageSelector } from "@/components/LanguageSelector";
+import dashboardText from "@/locales/dashboardText";
 
 type LostItem = {
-  category: string
-  id: string
-  date: Date
-  title: string
-  description: string
-  location: string
-  found: boolean
-  addedBy: string
-  room?: string
-}
+  category: string;
+  id: string;
+  date: Date;
+  title: string;
+  description: string;
+  location: string;
+  found: boolean;
+  addedBy: string;
+  room?: string;
+};
 
-type FilterState = "all" | "found" | "pending"
+type FilterState = "all" | "found" | "pending";
 
 type Notification = {
-  id: string
-  itemId: string
-  title: string
-  date: Date
-  status: "pending" | "found" | "deleted"
-  details?: string
-}
+  id: string;
+  itemId: string;
+  title: string;
+  date: Date;
+  status: "pending" | "found" | "deleted";
+  details?: string;
+};
 
 type SearchResult = {
-  item: LostItem
-  matches: ("title" | "description" | "location")[]
-}
+  item: LostItem;
+  matches: ("title" | "description" | "location")[];
+};
 
 const theme = {
   primary: "#fe9d3a",
@@ -101,7 +115,7 @@ const theme = {
   text: "#323130",
   border: "#E1DFDD",
   highlight: "#FFFF00",
-}
+};
 
 const localeMap = {
   en: enUS,
@@ -109,77 +123,84 @@ const localeMap = {
   es: es,
   de: de,
   it: it,
-}
+};
 
 export default function Component() {
-  const { language, changeLanguage } = useLanguage()
-  const t = dashboardText[language] || dashboardText.en // Fallback to English if language is not supported
+  const { language, changeLanguage } = useLanguage();
+  const t = dashboardText[language] || dashboardText.en; // Fallback to English if language is not supported
 
-  const [date, setDate] = React.useState<Date>(new Date())
-  const [items, setItems] = React.useState<LostItem[]>([])
-  const [lastNotificationClick, setLastNotificationClick] = React.useState<Date>(new Date())
-  const [notifications, setNotifications] = React.useState<Notification[]>([])
-  const [isLoading, setIsLoading] = React.useState(false)
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false)
-  const [filter, setFilter] = React.useState<FilterState>("all")
+  const [date, setDate] = React.useState<Date>(new Date());
+  const [items, setItems] = React.useState<LostItem[]>([]);
+  const [lastNotificationClick, setLastNotificationClick] = React.useState<
+    Date
+  >(new Date());
+  const [notifications, setNotifications] = React.useState<Notification[]>([]);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = React.useState(false);
+  const [filter, setFilter] = React.useState<FilterState>("all");
   const [trendDateRange, setTrendDateRange] = React.useState({
     start: subDays(new Date(), 3),
     end: addDays(new Date(), 3),
-  })
-  const [searchQuery, setSearchQuery] = React.useState("")
-  const [searchResults, setSearchResults] = React.useState<SearchResult[]>([])
-  const [highlightedItemId, setHighlightedItemId] = React.useState<string | null>(null)
-  const [isSearchOpen, setIsSearchOpen] = React.useState(false)
-  const searchRef = React.useRef<HTMLDivElement>(null)
+  });
+  const [searchQuery, setSearchQuery] = React.useState("");
+  const [searchResults, setSearchResults] = React.useState<SearchResult[]>([]);
+  const [highlightedItemId, setHighlightedItemId] = React.useState<
+    string | null
+  >(null);
+  const [isSearchOpen, setIsSearchOpen] = React.useState(false);
+  const searchRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     // Load notifications from localStorage
-    const storedNotifications = localStorage.getItem("notifications")
+    const storedNotifications = localStorage.getItem("notifications");
     if (storedNotifications) {
-      setNotifications(JSON.parse(storedNotifications))
+      setNotifications(JSON.parse(storedNotifications));
     }
 
     // Load last notification click time from localStorage
-    const storedLastClick = localStorage.getItem("lastNotificationClick")
+    const storedLastClick = localStorage.getItem("lastNotificationClick");
     if (storedLastClick) {
-      setLastNotificationClick(new Date(storedLastClick))
+      setLastNotificationClick(new Date(storedLastClick));
     }
 
     // Load items from localStorage
-    const storedItems = localStorage.getItem("items")
+    const storedItems = localStorage.getItem("items");
     if (storedItems) {
       setItems(
-        JSON.parse(storedItems, (key, value) =>
-          key === "date" ? parseISO(value) : value
-        )
-      )
+        JSON.parse(
+          storedItems,
+          (key, value) => key === "date" ? parseISO(value) : value,
+        ),
+      );
     }
-  }, [])
+  }, []);
 
   React.useEffect(() => {
     // Save notifications to localStorage whenever they change
-    localStorage.setItem("notifications", JSON.stringify(notifications))
-  }, [notifications])
+    localStorage.setItem("notifications", JSON.stringify(notifications));
+  }, [notifications]);
 
   React.useEffect(() => {
     // Save last notification click time to localStorage
     localStorage.setItem(
       "lastNotificationClick",
-      lastNotificationClick.toISOString()
-    )
-  }, [lastNotificationClick])
+      lastNotificationClick.toISOString(),
+    );
+  }, [lastNotificationClick]);
 
   React.useEffect(() => {
     // Save items to localStorage whenever they change
-    localStorage.setItem("items", JSON.stringify(items))
-  }, [items])
+    localStorage.setItem("items", JSON.stringify(items));
+  }, [items]);
 
   const addNotification = (notification: Notification) => {
-    setNotifications(prevNotifications => [...prevNotifications, notification])
-  }
+    setNotifications(
+      (prevNotifications) => [...prevNotifications, notification]
+    );
+  };
 
   const addItem = (
-    item: Omit<LostItem, "id" | "date" | "found" | "addedBy">
+    item: Omit<LostItem, "id" | "date" | "found" | "addedBy">,
   ) => {
     const newItem = {
       id: Math.random().toString(36).slice(2),
@@ -187,8 +208,8 @@ export default function Component() {
       found: false,
       addedBy: "Current User", // Replace with actual user info when available
       ...item,
-    }
-    setItems((prevItems) => [...prevItems, newItem])
+    };
+    setItems((prevItems) => [...prevItems, newItem]);
 
     // Add a new notification
     addNotification({
@@ -197,13 +218,13 @@ export default function Component() {
       title: newItem.title,
       date: new Date(),
       status: "pending",
-    })
-  }
+    });
+  };
 
   const deleteItem = (id: string) => {
-    const itemToDelete = items.find((item) => item.id === id)
+    const itemToDelete = items.find((item) => item.id === id);
     if (itemToDelete) {
-      setItems((prevItems) => prevItems.filter((item) => item.id !== id))
+      setItems((prevItems) => prevItems.filter((item) => item.id !== id));
 
       // Create a deletion notification
       addNotification({
@@ -218,23 +239,23 @@ export default function Component() {
             "{date}",
             format(new Date(), "PPp", { locale: localeMap[language] }).replace(
               /^\w/,
-              (c) => c.toUpperCase()
-            )
+              (c) => c.toUpperCase(),
+            ),
           ),
-      })
+      });
     }
-  }
+  };
 
   const toggleItemFound = (id: string) => {
     setItems((prevItems) =>
       prevItems.map((item) =>
         item.id === id ? { ...item, found: !item.found } : item
       )
-    )
+    );
     // Update associated notification with category information
-    const updatedItem = items.find(item => item.id === id)
+    const updatedItem = items.find((item) => item.id === id);
     if (updatedItem) {
-      const newStatus = !updatedItem.found // Toggle the status
+      const newStatus = !updatedItem.found; // Toggle the status
       addNotification({
         id: Math.random().toString(36).slice(2),
         itemId: id,
@@ -249,68 +270,67 @@ export default function Component() {
             "{date}",
             format(new Date(), "PPp", { locale: localeMap[language] }).replace(
               /^\w/,
-              (c) => c.toUpperCase()
-            )
+              (c) => c.toUpperCase(),
+            ),
           ),
-      })
+      });
     }
-  }
+  };
 
   const handleNotificationClick = () => {
-    setLastNotificationClick(new Date())
-  }
+    setLastNotificationClick(new Date());
+  };
 
   const handleDateChange = (newDate: Date | undefined) => {
     if (newDate) {
-      setIsLoading(true)
-      setDate(newDate)
-      setFilter("all")
+      setIsLoading(true);
+      setDate(newDate);
+      setFilter("all");
       setTrendDateRange({
         start: subDays(newDate, 3),
         end: addDays(newDate, 3),
-      })
+      });
       setTimeout(() => {
-        setIsLoading(false)
-      }, 500)
+        setIsLoading(false);
+      }, 500);
     }
-  }
+  };
 
   const adjustTrendRange = (direction: "backward" | "forward") => {
     setTrendDateRange((prevRange) => ({
-      start:
-        direction === "backward"
-          ? subDays(prevRange.start, 1)
-          : addDays(prevRange.start, 1),
-      end:
-        direction === "backward"
-          ? subDays(prevRange.end, 1)
-          : addDays(prevRange.end, 1),
-    }))
-  }
+      start: direction === "backward"
+        ? subDays(prevRange.start, 1)
+        : addDays(prevRange.start, 1),
+      end: direction === "backward"
+        ? subDays(prevRange.end, 1)
+        : addDays(prevRange.end, 1),
+    }));
+  };
 
   const markNotificationAsSeen = (id: string) => {
     setNotifications((prevNotifications) =>
       prevNotifications.filter((notif) => notif.id !== id)
-    )
-  }
+    );
+  };
 
   const clearAllNotifications = () => {
-    setNotifications([])
-  }
+    setNotifications([]);
+  };
 
-  const newNotificationsCount = notifications.filter((notif) =>
-    isAfter(notif.date, lastNotificationClick)
-  ).length
-  const displayCount =
-    newNotificationsCount > 99 ? "99+" : newNotificationsCount.toString()
+  const newNotificationsCount =
+    notifications.filter((notif) => isAfter(notif.date, lastNotificationClick))
+      .length;
+  const displayCount = newNotificationsCount > 99
+    ? "99+"
+    : newNotificationsCount.toString();
 
   const filteredItems = items.filter((item) => {
-    if (!isSameDay(item.date, date)) return false
-    if (filter === "all") return true
-    if (filter === "found") return item.found
-    if (filter === "pending") return !item.found
-    return true
-  })
+    if (!isSameDay(item.date, date)) return false;
+    if (filter === "all") return true;
+    if (filter === "found") return item.found;
+    if (filter === "pending") return !item.found;
+    return true;
+  });
 
   const stats = React.useMemo(
     () => ({
@@ -319,127 +339,132 @@ export default function Component() {
       pending: items.filter((item) => !item.found).length,
       found: items.filter((item) => item.found).length,
     }),
-    [items]
-  )
+    [items],
+  );
 
   // Chart data
   const pieData = [
     { name: t.pending, value: stats.pending, color: theme.warning },
     { name: t.found, value: stats.found, color: theme.success },
-  ]
+  ];
 
   const getColorByName = (name: string) => {
-    const item = pieData.find((data) => data.name === name)
-    return item ? item.color : theme.text
-  }
+    const item = pieData.find((data) => data.name === name);
+    return item ? item.color : theme.text;
+  };
 
   const barData = pieData.map((item) => ({
     name: item.name,
     value: item.value,
-  }))
+  }));
 
   const getDailyData = () => {
-    const dailyData = []
-    let currentDate = startOfDay(trendDateRange.start)
+    const dailyData = [];
+    let currentDate = startOfDay(trendDateRange.start);
     while (currentDate <= trendDateRange.end) {
       const dayItems = items.filter((item) =>
         isSameDay(item.date, currentDate)
-      )
+      );
       dailyData.push({
         date: format(currentDate, "MM/dd", {
           locale: localeMap[language],
         }).replace(/^\w/, (c) => c.toUpperCase()),
         pending: dayItems.filter((item) => !item.found).length,
         found: dayItems.filter((item) => item.found).length,
-      })
-      currentDate = addDays(currentDate, 1)
+      });
+      currentDate = addDays(currentDate, 1);
     }
-    return dailyData
-  }
+    return dailyData;
+  };
 
   const debounce = (func: (...args: any[]) => void, delay: number) => {
-    let timeoutId: NodeJS.Timeout
+    let timeoutId: NodeJS.Timeout;
     return (...args: any[]) => {
-      clearTimeout(timeoutId)
-      timeoutId = setTimeout(() => func(...args), delay)
-    }
-  }
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(() => func(...args), delay);
+    };
+  };
 
   const formatDate = (date: Date) => {
-    const monthIndex = date.getMonth()
-    const day = date.getDate()
-    const year = date.getFullYear()
-    return `${t.months[monthIndex]} ${day}, ${year}`
-  }
+    const monthIndex = date.getMonth();
+    const day = date.getDate();
+    const year = date.getFullYear();
+    return `${t.months[monthIndex]} ${day}, ${year}`;
+  };
 
   const handleSearch = React.useCallback(
     debounce((query: string) => {
       if (query.trim() === "") {
-        setSearchResults([])
-        setIsSearchOpen(false)
-        return
+        setSearchResults([]);
+        setIsSearchOpen(false);
+        return;
       }
 
       const results: SearchResult[] = items
         .map((item) => {
-          const matches: ("title" | "description" | "location")[] = []
-          if (item.title.toLowerCase().includes(query.toLowerCase()))
-            matches.push("title")
-          if (item.description.toLowerCase().includes(query.toLowerCase()))
-            matches.push("description")
-          if (item.location.toLowerCase().includes(query.toLowerCase()))
-            matches.push("location")
-          return matches.length > 0 ? { item, matches } : null
+          const matches: ("title" | "description" | "location")[] = [];
+          if (item.title.toLowerCase().includes(query.toLowerCase())) {
+            matches.push("title");
+          }
+          if (item.description.toLowerCase().includes(query.toLowerCase())) {
+            matches.push("description");
+          }
+          if (item.location.toLowerCase().includes(query.toLowerCase())) {
+            matches.push("location");
+          }
+          return matches.length > 0 ? { item, matches } : null;
         })
-        .filter((result): result is SearchResult => result !== null)
+        .filter((result): result is SearchResult => result !== null);
 
-      setSearchResults(results)
-      setIsSearchOpen(true)
+      setSearchResults(results);
+      setIsSearchOpen(true);
 
       if (results.length > 0) {
-        setDate(results[0].item.date)
-        setHighlightedItemId(results[0].item.id)
+        setDate(results[0].item.date);
+        setHighlightedItemId(results[0].item.id);
         setTrendDateRange({
           start: subDays(results[0].item.date, 3),
           end: addDays(results[0].item.date, 3),
-        })
+        });
       }
     }, 300),
-    [items, setDate, setHighlightedItemId, setTrendDateRange]
-  )
+    [items, setDate, setHighlightedItemId, setTrendDateRange],
+  );
 
   React.useEffect(() => {
-    handleSearch(searchQuery)
-  }, [searchQuery, handleSearch])
+    handleSearch(searchQuery);
+  }, [searchQuery, handleSearch]);
 
   React.useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
-        setIsSearchOpen(false)
+      if (
+        searchRef.current && !searchRef.current.contains(event.target as Node)
+      ) {
+        setIsSearchOpen(false);
       }
-    }
+    };
 
-    document.addEventListener('mousedown', handleClickOutside)
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
 
   const handleSearchResultClick = (item: LostItem) => {
-    setDate(item.date)
-    setHighlightedItemId(item.id)
-    setIsSearchOpen(false)
-    setSearchQuery("")
-  }
+    setDate(item.date);
+    setHighlightedItemId(item.id);
+    setIsSearchOpen(false);
+    setSearchQuery("");
+  };
 
   React.useEffect(() => {
     if (highlightedItemId) {
       const timer = setTimeout(() => {
-        setHighlightedItemId(null)
-      }, 3000)
-      return () => clearTimeout(timer)
+        setHighlightedItemId(null);
+      }, 3000);
+      return () => clearTimeout(timer);
     }
-  }, [highlightedItemId])
+  }, [highlightedItemId]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col md:flex-row">
@@ -472,7 +497,10 @@ export default function Component() {
           </div>
           <div className="flex items-center space-x-4">
             <div className="relative" ref={searchRef}>
-              <form className="relative hidden sm:block" onSubmit={(e) => e.preventDefault()}>
+              <form
+                className="relative hidden sm:block"
+                onSubmit={(e) => e.preventDefault()}
+              >
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                 <Input
                   type="search"
@@ -487,8 +515,8 @@ export default function Component() {
                     size="icon"
                     className="absolute right-2 top-1/2 transform -translate-y-1/2"
                     onClick={() => {
-                      setSearchQuery("")
-                      setIsSearchOpen(false)
+                      setSearchQuery("");
+                      setIsSearchOpen(false);
                     }}
                   >
                     <X className="h-4 w-4" />
@@ -498,34 +526,50 @@ export default function Component() {
               {isSearchOpen && (
                 <Card className="absolute top-full left-0 right-0 mt-1 z-10">
                   <CardContent className="p-2">
-                    {searchResults.length > 0 ? (
-                      <>
-                        <p className="text-sm text-gray-500 mb-2">
-                          {t.search.resultsCount
-                            .replace("{count}", searchResults.length.toString())
-                            .replace(
-                              "{dates}",
-                              new Set(searchResults.map((r) => format(r.item.date, "yyyy-MM-dd"))).size.toString()
-                            )}
+                    {searchResults.length > 0
+                      ? (
+                        <>
+                          <p className="text-sm text-gray-500 mb-2">
+                            {t.search.resultsCount
+                              .replace(
+                                "{count}",
+                                searchResults.length.toString(),
+                              )
+                              .replace(
+                                "{dates}",
+                                new Set(
+                                  searchResults.map((r) =>
+                                    format(r.item.date, "yyyy-MM-dd")
+                                  ),
+                                ).size.toString(),
+                              )}
+                          </p>
+                          <ul className="space-y-2">
+                            {searchResults.map((result) => (
+                              <li
+                                key={result.item.id}
+                                className="cursor-pointer hover:bg-gray-100 p-2 rounded"
+                                onClick={() =>
+                                  handleSearchResultClick(result.item)}
+                              >
+                                <p className="font-medium">
+                                  {result.item.title}
+                                </p>
+                                <p className="text-sm text-gray-500">
+                                  {format(result.item.date, "PPP", {
+                                    locale: localeMap[language],
+                                  })}
+                                </p>
+                              </li>
+                            ))}
+                          </ul>
+                        </>
+                      )
+                      : (
+                        <p className="text-sm text-gray-500">
+                          {t.search.noResults}
                         </p>
-                        <ul className="space-y-2">
-                          {searchResults.map((result) => (
-                            <li
-                              key={result.item.id}
-                              className="cursor-pointer hover:bg-gray-100 p-2 rounded"
-                              onClick={() => handleSearchResultClick(result.item)}
-                            >
-                              <p className="font-medium">{result.item.title}</p>
-                              <p className="text-sm text-gray-500">
-                                {format(result.item.date, "PPP", { locale: localeMap[language] })}
-                              </p>
-                            </li>
-                          ))}
-                        </ul>
-                      </>
-                    ) : (
-                      <p className="text-sm text-gray-500">{t.search.noResults}</p>
-                    )}
+                      )}
                   </CardContent>
                 </Card>
               )}
@@ -545,7 +589,7 @@ export default function Component() {
                   <Bell
                     className={cn(
                       "h-5 w-5 text-gray-600",
-                      newNotificationsCount > 0 && "text-blue-500"
+                      newNotificationsCount > 0 && "text-blue-500",
                     )}
                   />
                   {newNotificationsCount > 0 && (
@@ -571,39 +615,41 @@ export default function Component() {
                   )}
                 </div>
                 <ScrollArea className="h-[300px]">
-                  {notifications.length === 0 ? (
-                    <div className="p-4 text-center text-gray-500">
-                      {t.notifications.noNotifications}
-                    </div>
-                  ) : (
-                    notifications.map((notif) => (
-                      <div
-                        key={notif.id}
-                        className="p-4 border-b last:border-b-0 flex items-center justify-between"
-                      >
-                        <div>
-                          <p className="font-medium">{notif.title}</p>
-                          <p className="text-sm text-gray-500">
-                            {notif.status === "deleted"
-                              ? notif.details
-                              : `${format(notif.date, "PPp", {
-                                  locale: localeMap[language],
-                                }).replace(/^\w/, (c) => c.toUpperCase())} - ${
-                                  notif.status
-                                }`}
-                          </p>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => markNotificationAsSeen(notif.id)}
-                          title={t.notifications.markAsSeen}
-                        >
-                          <Check className="h-4 w-4" />
-                        </Button>
+                  {notifications.length === 0
+                    ? (
+                      <div className="p-4 text-center text-gray-500">
+                        {t.notifications.noNotifications}
                       </div>
-                    ))
-                  )}
+                    )
+                    : (
+                      notifications.map((notif) => (
+                        <div
+                          key={notif.id}
+                          className="p-4 border-b last:border-b-0 flex items-center justify-between"
+                        >
+                          <div>
+                            <p className="font-medium">{notif.title}</p>
+                            <p className="text-sm text-gray-500">
+                              {notif.status === "deleted"
+                                ? notif.details
+                                : `${
+                                  format(notif.date, "PPp", {
+                                    locale: localeMap[language],
+                                  }).replace(/^\w/, (c) => c.toUpperCase())
+                                } - ${notif.status}`}
+                            </p>
+                          </div>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => markNotificationAsSeen(notif.id)}
+                            title={t.notifications.markAsSeen}
+                          >
+                            <Check className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))
+                    )}
                 </ScrollArea>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -672,45 +718,43 @@ export default function Component() {
                   </Button>
                   <CardContent className="p-0 absolute inset-0 flex items-center justify-center">
                     <div className="h-[150px] w-[150px]">
-                      {isLoading ? (
-                        <Skeleton className="h-full w-full rounded-full" />
-                      ) : (
-                        <ResponsiveContainer width="100%" height="100%">
-                          <PieChart>
-                            <Pie
-                              data={pieData}
-                              cx="50%"
-                              cy="50%"
-                              innerRadius="40%"
-                              outerRadius="80%"
-                              paddingAngle={5}
-                              dataKey="value"
-                              onClick={(data) => {
-                                setFilter(
-                                  data.name.toLowerCase() as FilterState
-                                )
-                              }}
-                              animationBegin={0}
-                              animationDuration={500}
-                              animationEasing="ease-out"
-                            >
-                              {pieData.map((entry, index) => (
-                                <Cell
-                                  key={`cell-${index}`}
-                                  fill={entry.color}
-                                  opacity={
-                                    filter === "all" ||
-                                    filter === entry.name.toLowerCase()
+                      {isLoading
+                        ? <Skeleton className="h-full w-full rounded-full" />
+                        : (
+                          <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                              <Pie
+                                data={pieData}
+                                cx="50%"
+                                cy="50%"
+                                innerRadius="40%"
+                                outerRadius="80%"
+                                paddingAngle={5}
+                                dataKey="value"
+                                onClick={(data) => {
+                                  setFilter(
+                                    data.name.toLowerCase() as FilterState,
+                                  );
+                                }}
+                                animationBegin={0}
+                                animationDuration={500}
+                                animationEasing="ease-out"
+                              >
+                                {pieData.map((entry, index) => (
+                                  <Cell
+                                    key={`cell-${index}`}
+                                    fill={entry.color}
+                                    opacity={filter === "all" ||
+                                        filter === entry.name.toLowerCase()
                                       ? 1
-                                      : 0.3
-                                  }
-                                />
-                              ))}
-                            </Pie>
-                            <Tooltip />
-                          </PieChart>
-                        </ResponsiveContainer>
-                      )}
+                                      : 0.3}
+                                  />
+                                ))}
+                              </Pie>
+                              <Tooltip />
+                            </PieChart>
+                          </ResponsiveContainer>
+                        )}
                     </div>
                   </CardContent>
                 </Card>
@@ -737,32 +781,37 @@ export default function Component() {
                   </CardHeader>
                   <CardContent className="p-0">
                     <div className="h-[140px] w-full px-6">
-                      {isLoading ? (
-                        <Skeleton className="h-full w-full" />
-                      ) : (
-                        <ResponsiveContainer
-                          width="100%"
-                          height="100%"
-                          minWidth={100}
-                        >
-                          <BarChart
-                            data={barData}
-                            margin={{ top: 5, right: 5, left: -15, bottom: 5 }}
+                      {isLoading
+                        ? <Skeleton className="h-full w-full" />
+                        : (
+                          <ResponsiveContainer
+                            width="100%"
+                            height="100%"
+                            minWidth={100}
                           >
-                            <XAxis dataKey="name" tick={false} height={20} />
-                            <YAxis tick={false} width={25} />
-                            <Tooltip />
-                            <Bar dataKey="value" barSize={15}>
-                              {barData.map((entry, index) => (
-                                <Cell
-                                  key={`cell-${index}`}
-                                  fill={getColorByName(entry.name)}
-                                />
-                              ))}
-                            </Bar>
-                          </BarChart>
-                        </ResponsiveContainer>
-                      )}
+                            <BarChart
+                              data={barData}
+                              margin={{
+                                top: 5,
+                                right: 5,
+                                left: -15,
+                                bottom: 5,
+                              }}
+                            >
+                              <XAxis dataKey="name" tick={false} height={20} />
+                              <YAxis tick={false} width={25} />
+                              <Tooltip />
+                              <Bar dataKey="value" barSize={15}>
+                                {barData.map((entry, index) => (
+                                  <Cell
+                                    key={`cell-${index}`}
+                                    fill={getColorByName(entry.name)}
+                                  />
+                                ))}
+                              </Bar>
+                            </BarChart>
+                          </ResponsiveContainer>
+                        )}
                     </div>
                   </CardContent>
                 </Card>
@@ -788,25 +837,55 @@ export default function Component() {
                 </div>
                 <CardContent className="p-0 h-full">
                   <div className="w-full h-full pt-10 pr-16 pb-6 pl-2">
-                    {isLoading ? (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <Skeleton className="w-4/5 h-4/5" />
-                      </div>
-                    ) : (
-                      <ResponsiveContainer width="100%" height="100%">
-                        <AreaChart data={getDailyData()}>
-                          <XAxis dataKey="date" />
-                          <YAxis />
-                          <Tooltip />
-                          <defs>
-                            <linearGradient id="colorPending" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor={theme.warning} stopOpacity={0.8} />
-                              <stop offset="95%" stopColor={theme.warning} stopOpacity={0} />
-                            </linearGradient>
-                            <linearGradient id="colorFound" x1="0" y1="0" x2="0" y2="1">
-                              <stop offset="5%" stopColor={theme.success} stopOpacity={0.8} />
-                              <stop offset="95%" stopColor={theme.success} stopOpacity={0} />
-                            </linearGradient>
+                    {isLoading
+                      ? (
+                        <div className="w-full h-full flex items-center justify-center">
+                          <Skeleton className="w-4/5 h-4/5" />
+                        </div>
+                      )
+                      : (
+                        <ResponsiveContainer width="100%" height="100%">
+                          <AreaChart data={getDailyData()}>
+                            <XAxis dataKey="date" />
+                            <YAxis />
+                            <Tooltip />
+                            <defs>
+                              <linearGradient
+                                id="colorPending"
+                                x1="0"
+                                y1="0"
+                                x2="0"
+                                y2="1"
+                              >
+                                <stop
+                                  offset="5%"
+                                  stopColor={theme.warning}
+                                  stopOpacity={0.8}
+                                />
+                                <stop
+                                  offset="95%"
+                                  stopColor={theme.warning}
+                                  stopOpacity={0}
+                                />
+                              </linearGradient>
+                              <linearGradient
+                                id="colorFound"
+                                x1="0"
+                                y1="0"
+                                x2="0"
+                                y2="1"
+                              >
+                                <stop
+                                  offset="5%"
+                                  stopColor={theme.success}
+                                  stopOpacity={0.8}
+                                />
+                                <stop
+                                  offset="95%"
+                                  stopColor={theme.success}
+                                  stopOpacity={0}
+                                />
+                              </linearGradient>
                             </defs>
                             <Area
                               type="monotone"
@@ -1082,8 +1161,11 @@ function AddItemForm({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSubmit({
-      title, description, location, room,
-      category: ""
+      title,
+      description,
+      location,
+      room,
+      category: "",
     });
     setTitle("");
     setDescription("");
