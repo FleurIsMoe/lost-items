@@ -48,8 +48,7 @@ import {
   Menu,
   Plus,
   Search,
-  Settings,
-  X
+  Settings
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -90,9 +89,7 @@ import {
 import {
   Select,
   SelectContent,
-  SelectGroup,
   SelectItem,
-  SelectLabel,
   SelectTrigger,
   SelectValue
 } from "@/components/ui/select";
@@ -1385,91 +1382,4 @@ function ItemForm({
   );
 }
 
-function EditItemForm({
-  item,
-  onSubmit,
-  translations
-}: {
-  item: LostItem;
-  onSubmit: (updatedItem: Partial<LostItem>) => void;
-  translations: any;
-}) {
-  const [title, setTitle] = React.useState(item.title);
-  const [description, setDescription] = React.useState(item.description);
-  const [location, setLocation] = React.useState(item.location);
-  const [room, setRoom] = React.useState(item.room || "");
-  const [date, setDate] = React.useState<Date>(item.date);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    onSubmit({
-      title,
-      description,
-      location,
-      room,
-      date
-    });
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4">
-      <div>
-        <Label htmlFor="edit-title">{translations.formTitle}</Label>
-        <Input
-          id="edit-title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-        />
-      </div>
-      <div>
-        <Label htmlFor="edit-description">{translations.formDescription}</Label>
-        <Textarea
-          id="edit-description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
-      </div>
-      <div className="flex space-x-4">
-        <div className="w-1/3 max-w-[6ch]">
-          <Label htmlFor="edit-room">{translations.formRoom}</Label>
-          <Input
-            id="edit-room"
-            value={room}
-            onChange={(e) => {
-              const value = e.target.value;
-              if (
-                value === "" ||
-                (/^\d{1,3}$/.test(value) && parseInt(value) <= 999)
-              ) {
-                setRoom(value);
-              }
-            }}
-            maxLength={4}
-          />
-        </div>
-        <div className="flex-1">
-          <Label htmlFor="edit-location">{translations.formLocation}</Label>
-          <Input
-            id="edit-location"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            required
-          />
-        </div>
-      </div>
-      <div>
-        <Label htmlFor="edit-date">{translations.formDate}</Label>
-        <Calendar
-          mode="single"
-          selected={date}
-          onSelect={(newDate) => newDate && setDate(newDate)}
-          className="rounded-md border"
-        />
-      </div>
-      <Button type="submit" className="w-full">
-        {translations.formSubmit}
-      </Button>
-    </form>
-  );
-}

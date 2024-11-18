@@ -22,7 +22,6 @@ import { cn } from "@/lib/utils"
 import { useLanguage } from "@/utils/languageHandler"
 import dashboardText from "@/locales/dashboardText"
 import colors from "@/app/theme/colors";
-import styled from "styled-components";
 
 interface CalendarProps {
   mode?: "single"
@@ -167,16 +166,16 @@ export function Calendar({
 
           const scaleFactor = 1 + (containerSize.width / 2000);
 
-          let dayStyle: React.CSSProperties = {
+          const dayStyle: React.CSSProperties = {
             transform: isSelected ? `scale(${scaleFactor})` : 'scale(1)',
             zIndex: isSelected ? 10 : 'auto',
             color: themeColors.text,
           };
-
+          
           if (!isCurrentMonth) {
             dayStyle.color = themeColors.calendarNotCurrentMonthText;
           }
-
+          
           if (isSelected) {
             dayStyle.backgroundColor = themeColors.calendarSelectedDayBackground;
             dayStyle.color = themeColors.calendarSelectedDayText;
@@ -184,7 +183,7 @@ export function Calendar({
             dayStyle.backgroundColor = themeColors.calendarTodayBackground;
             dayStyle.color = themeColors.calendarTodayText;
           }
-
+          
           if (isSpecial) {
             dayStyle.color = themeColors.calendarSpecialDateText;
           }
