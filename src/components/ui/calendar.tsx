@@ -13,13 +13,13 @@ import {
   isSameDay,
   isToday,
   startOfWeek,
-  endOfWeek
+  endOfWeek,
 } from "date-fns";
 import { enUS, fr, es, de, it } from "date-fns/locale";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { useLanguage } from "@/utils/languageHandler";
+import { useLanguage } from "@/lib/languageHandler";
 import dashboardText from "@/locales/dashboardText";
 import colors from "@/app/theme/colors";
 
@@ -37,7 +37,7 @@ const localeMap = {
   fr: fr,
   es: es,
   de: de,
-  it: it
+  it: it,
 };
 
 export function Calendar({
@@ -45,13 +45,13 @@ export function Calendar({
   onSelect,
   className,
   specialDates = [],
-  theme = "white"
+  theme = "white",
 }: CalendarProps) {
   const [currentMonth, setCurrentMonth] = React.useState(new Date());
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [containerSize, setContainerSize] = React.useState({
     width: 0,
-    height: 0
+    height: 0,
   });
   const { language } = useLanguage();
   const t = dashboardText[language] || dashboardText.en;
@@ -63,7 +63,7 @@ export function Calendar({
       if (containerRef.current) {
         setContainerSize({
           width: containerRef.current.offsetWidth,
-          height: containerRef.current.offsetHeight
+          height: containerRef.current.offsetHeight,
         });
       }
     };
@@ -118,7 +118,7 @@ export function Calendar({
           size="icon"
           className="h-auto w-auto p-1 hover:bg-primary/10"
           style={{
-            color: themeColors.calendarButtonIconColor
+            color: themeColors.calendarButtonIconColor,
           }}
         >
           <ChevronLeft className="h-6 w-6" />
@@ -128,7 +128,7 @@ export function Calendar({
           className="text-xl font-medium"
           style={{
             fontSize: `${monthFontSize}px`,
-            color: themeColors.calendarMonthText
+            color: themeColors.calendarMonthText,
           }}
         >
           {formatMonth(currentMonth)}
@@ -139,7 +139,7 @@ export function Calendar({
           size="icon"
           className="h-auto w-auto p-1 hover:bg-primary/10"
           style={{
-            color: themeColors.calendarButtonIconColor
+            color: themeColors.calendarButtonIconColor,
           }}
         >
           <ChevronRight className="h-6 w-6" />
@@ -153,7 +153,7 @@ export function Calendar({
             className="font-normal flex items-center pl-3"
             style={{
               fontSize: "1em",
-              color: themeColors.calendarDayNameText
+              color: themeColors.calendarDayNameText,
             }}
           >
             {day}
@@ -172,7 +172,7 @@ export function Calendar({
           const dayStyle: React.CSSProperties = {
             transform: isSelected ? `scale(${scaleFactor})` : "scale(1)",
             zIndex: isSelected ? 10 : "auto",
-            color: themeColors.text
+            color: themeColors.text,
           };
 
           if (!isCurrentMonth) {
@@ -202,7 +202,7 @@ export function Calendar({
                 "hover:bg-transparent"
               )}
               style={{
-                ...dayStyle
+                ...dayStyle,
               }}
             >
               {format(day, "d", { locale: localeMap[language] })}

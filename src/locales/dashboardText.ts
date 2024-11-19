@@ -7,8 +7,38 @@ type Language =
   | 'es'
   | 'de';
 
+interface ItemListText {
+  title: string;
+  addItem: string;
+  markAsLost: string;
+  markAsFound: string;
+  edit: string;
+  delete: string;
+  addNewItem: string;
+  addNewItemDescription: string;
+  description: string;
+  category: string;
+  selectCategory: string;
+  location: string;
+  add: string;
+  editItem: string;
+  editItemDescription: string;
+  found: string;
+  save: string;
+  confirmDelete: string;
+  search: {
+    placeholder: string;
+    noResults: string;
+    resultsCount: string;
+  };
+}
+
 interface DashboardText {
-  [key: string]: ReactNode | Record<string, string> | string[];
+  search: {
+    placeholder: string;
+    resultsCount: string;
+    noResults: string;
+  }
   title: string;
   stats: {
     total: string;
@@ -16,6 +46,10 @@ interface DashboardText {
     pending: string;
     found: string;
   };
+  total: string;
+  today: string;
+  pending: string;
+  found: string;
   addItem: string;
   addLostItem: string;
   noItems: string;
@@ -29,8 +63,9 @@ interface DashboardText {
     trend: string;
     daily: string;
   };
-  pending: string;
-  found: string;
+  status: string;
+  trend: string;
+  daily: string;
   markAsFound: string;
   editItem: string;
   editLostItem: string;
@@ -52,86 +87,162 @@ interface DashboardText {
     itemFound: string;
     itemLost: string;
   };
-  itemsForDate: string;
-  search: {
-    placeholder: string;
-    noResults: string;
-    resultsCount: string;
-    clearSearch: string;
+  itemList: ItemListText;
+  categories: {
+    electronics: string;
+    clothing: string;
+    accessories: string;
+    documents: string;
+    jewelery: string;
+    luggage: string;
+    keys: string;
+    cosmetics: string;
+    glasses: string;
+    medical: string;
+    other: string;
   };
   months: string[];
-  settings: string;
-  settingsDescription: string;
-  retentionTime: string;
-  saveSettings: string;
-  day: string;
-  month: string;
-  year: string;
+  settings: {
+    title: string;
+    description: string;
+    export: string;
+    import: string;
+    delete: string;
+    format: string;
+    file: string;
+    exportButton: string;
+    importButton: string;
+    deleteConfirm: string;
+    deleteAllButton: string;
+  };
 }
-
 const dashboardText: Record<Language, DashboardText> = {
   en: {
-    title: "Lost Items",
-    stats: {
-      total: "Total Items",
-      today: "Today's Items",
-      pending: "Pending",
-      found: "Withdrawn"
-    },
-    addItem: "Add Item",
-    addLostItem: "Add Lost Item",
-    noItems: "No items found",
-    formTitle: "Title",
-    formDesc: "Description",
-    formLocation: "Location",
-    formRoom: "Room",
-    formSubmit: "Submit",
-    charts: {
-      status: "Items by Status",
-      trend: "Items Trend",
-      daily: "Daily Items"
-    },
-    pending: "Pending",
-    found: "Found",
-    markAsFound: "Mark as Found",
-    editItem: "Edit",
-    editLostItem: "Edit Lost Item",
-    deleteItem: "Delete",
-    deleteConfirmTitle: "Are you sure?",
-    deleteConfirmYes: "Yes",
-    deleteConfirmNo: "No",
-    showAllItems: "Show All",
-    currentlyShowing: "Currently showing",
-    items: "items",
-    notifications: {
-      title: "Notifications",
-      noNotifications: "No new notifications",
-      clearAll: "Clear All",
-      markAsSeen: "Mark as seen",
-      itemDeleted: "Item Deleted",
-      itemDeletedDetails: "An item titled '{title}' was deleted on {date}.",
-      itemStatusChanged: "An item titled '{title}' was changed to '{status}' on {date}.",
-      itemFound: "Item Retrieved",
-      itemLost: "Item in Custody",
-    },
-    itemsForDate: "Items for",
     search: {
-      placeholder: "Search items...",
+      placeholder: 'Search',
+      resultsCount: "{count} results across {dates} dates",
       noResults: "No results found",
-      resultsCount: "{count} items found across {dates} dates",
-      clearSearch: "Clear search",
     },
-
-    months: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-    settings: "Settings",
-    settingsDescription: "Change your settings here",
-    retentionTime: "Item deletion time ",
-    saveSettings: "Save settings",
-    day: "Day(s)",
-    month: "Month(s)",
-    year: "Year(s)",
+    title: 'Dashboard',
+    stats: {
+      total: 'Total',
+      today: 'Today',
+      pending: 'Pending',
+      found: 'Found',
+    },
+    total: 'Total',
+    today: 'Today',
+    pending: 'Pending',
+    found: 'Found',
+    addItem: 'Add Item',
+    addLostItem: 'Add Lost Item',
+    noItems: 'No Items',
+    formTitle: 'Title',
+    formDesc: 'Description',
+    formLocation: 'Location',
+    formRoom: 'Room',
+    formSubmit: 'Submit',
+    charts: {
+      status: 'Status',
+      trend: 'Trend',
+      daily: 'Daily',
+    },
+    status: 'Status',
+    trend: 'Trend',
+    daily: 'Daily',
+    markAsFound: 'Mark as Found',
+    editItem: 'Edit Item',
+    editLostItem: 'Edit Lost Item',
+    deleteItem: 'Delete Item',
+    deleteConfirmTitle: 'Delete Confirmation',
+    deleteConfirmYes: 'Yes',
+    deleteConfirmNo: 'No',
+    showAllItems: 'Show All Items',
+    currentlyShowing: 'Currently Showing',
+    items: 'Items',
+    notifications: {
+      title: 'Notifications',
+      noNotifications: 'No Notifications',
+      clearAll: 'Clear All',
+      markAsSeen: 'Mark as Seen',
+      itemDeleted: 'Item Deleted',
+      itemDeletedDetails: 'Item Deleted Details',
+      itemStatusChanged: 'Item Status Changed',
+      itemFound: 'Item Found',
+      itemLost: 'Item Lost',
+    },
+    itemList: {
+      title: 'Item List',
+      addItem: 'Add Item',
+      markAsLost: 'Mark as Lost',
+      markAsFound: 'Mark as Found',
+      edit: 'Edit',
+      delete: 'Delete',
+      addNewItem: 'Add New Item',
+      addNewItemDescription: 'Add New Item Description',
+      description: 'Description',
+      category: 'Category',
+      selectCategory: 'Select Category',
+      location: 'Location',
+      add: 'Add',
+      editItem: 'Edit Item',
+      editItemDescription: 'Edit Item Description',
+      found: 'Found',
+      save: 'Save',
+      confirmDelete: 'Confirm Delete',
+      search: {
+        placeholder: 'Search',
+        resultsCount: "{count} results across {dates} dates",
+        noResults: "No results found"
+      }
+    },
+    categories: {
+      electronics: 'Electronics',
+      clothing: 'Clothing',
+      accessories: 'Accessories',
+      documents: 'Documents',
+      jewelery: 'Jewelery',
+      luggage: 'Luggage',
+      keys: 'Keys',
+      cosmetics: 'Cosmetics',
+      glasses: 'Glasses',
+      medical: 'Medical',
+      other: 'Other',
+    },
+    months: [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ],
+    settings: {
+      title: 'Settings',
+      description: 'Description',
+      export: 'Export',
+      import: 'Import',
+      delete: 'Delete',
+      format: 'Format',
+      file: 'File',
+      exportButton: 'Export',
+      importButton: 'Import',
+      deleteConfirm: 'Are you sure you want to delete all data?',
+      deleteAllButton: 'Delete All',
+    },
   },
   it: {
+    search: {
+      placeholder: "Cerca",
+      resultsCount: "{count} risultati per {dates} date",
+      noResults: "Nessun risultato trovato",
+    },
     title: "Oggetti Persi",
     stats: {
       total: "Totale Oggetti",
@@ -139,6 +250,10 @@ const dashboardText: Record<Language, DashboardText> = {
       pending: "In Attesa",
       found: "Ritirati"
     },
+    total: "Totale",
+    today: "Oggi",
+    pending: "In Attesa",
+    found: "Ritirati",
     addItem: "Aggiungi Oggetto",
     addLostItem: "Aggiungi l'oggetto perso",
     noItems: "Nessun oggetto trovato",
@@ -152,12 +267,13 @@ const dashboardText: Record<Language, DashboardText> = {
       trend: "Tendenza degli Oggetti",
       daily: "Oggetti Giornalieri"
     },
-    pending: "In Attesa",
-    found: "Ritirati",
+    status: "Stato",
+    trend: "Tendenza",
+    daily: "Giornaliero",
     markAsFound: "Segna come Trovato",
-    editItem: "Modifica",
+    editItem: "Modifica Oggetto",
     editLostItem: "Modifica l'oggetto perso",
-    deleteItem: "Elimina",
+    deleteItem: "Elimina Oggetto",
     deleteConfirmTitle: "Sei sicuro?",
     deleteConfirmYes: "Sì",
     deleteConfirmNo: "No",
@@ -173,25 +289,80 @@ const dashboardText: Record<Language, DashboardText> = {
       itemDeletedDetails: "Un oggetto intitolato '{title}' è stato eliminato il {date}.",
       itemStatusChanged: "Un oggetto intitolato '{title}' in categoria '{category}' è stato segnato come {status} il {date}.",
       itemFound: "Oggetto Ritirato",
-      itemLost: "Oggetto In Custodia",
+      itemLost: "Oggetto Perso",
     },
-    itemsForDate: "Oggetti per",
-    search: {
-      placeholder: "Cerca oggetti...",
-      noResults: "Nessun risultato trovato",
-      resultsCount: "{count} oggetti trovati tra {dates} date",
-      clearSearch: "Cancella Ricerca",
+    itemList: {
+      title: 'Lista degli Oggetti',
+      addItem: 'Aggiungi Oggetto',
+      markAsLost: 'Segna come Perso',
+      markAsFound: 'Segna come Trovato',
+      edit: 'Modifica',
+      delete: 'Elimina',
+      addNewItem: 'Aggiungi Nuovo Oggetto',
+      addNewItemDescription: 'Descrizione del Nuovo Oggetto',
+      description: 'Descrizione',
+      category: 'Categoria',
+      selectCategory: 'Seleziona Categoria',
+      location: 'Luogo',
+      add: 'Aggiungi',
+      editItem: 'Modifica Oggetto',
+      editItemDescription: 'Descrizione dell\'Oggetto',
+      found: 'Trovato',
+      save: 'Salva',
+      confirmDelete: 'Conferma Eliminazione',
+      search: {
+        placeholder: 'Cerca',
+        noResults: 'Nessun risultato trovato',
+        resultsCount: '{count} risultati per {dates} date',
+      },
     },
-    months: ["Gennaio", "Febbraio", "Marzo", "Aprile", "Maggio", "Giugno", "Luglio", "Agosto", "Settembre", "Ottobre", "Novembre", "Dicembre"],
-    settings: "Impostazioni",
-    settingsDescription: "Modifica le tue impostazioni qui",
-    retentionTime: "Tempo di rimozione degli oggetti",
-    saveSettings: "Salva impostazioni",
-    day: "Giorni",
-    month: "Mesi",
-    year: "Anni",
+    categories: {
+      electronics: 'Elettronica',
+      clothing: 'Abbigliamento',
+      accessories: 'Accessori',
+      documents: 'Documenti',
+      jewelery: ' Gioielli',
+      luggage: 'Borse',
+      keys: 'Chiavi',
+      cosmetics: 'Cosmetici',
+      glasses: 'Occhiali',
+      medical: 'Medicinali',
+      other: 'Altro',
+    },
+    months: [
+      'Gennaio',
+      'Febbraio',
+      'Marzo',
+      'Aprile',
+      'Maggio',
+      'Giugno',
+      'Luglio',
+      'Agosto',
+      'Settembre',
+      'Ottobre',
+      'Novembre',
+      'Dicembre',
+    ],
+    settings: {
+      title: 'Impostazioni',
+      description: 'Descrizione',
+      export: 'Esporta',
+      import: 'Importa',
+      delete: 'Elimina',
+      format: 'Formato',
+      file: 'File',
+      exportButton: 'Esporta',
+      importButton: 'Importa',
+      deleteConfirm: 'Sei sicuro di voler eliminare tutti i dati?',
+      deleteAllButton: 'Elimina Tutti',
+    },
   },
   fr: {
+    search: {
+      placeholder: "Recherche",
+      resultsCount: "{count} résultats pour {dates} dates",
+      noResults: "Aucun resultat trouve",
+    },
     title: "Objets Perdus",
     stats: {
       total: "Total des Objets",
@@ -199,6 +370,10 @@ const dashboardText: Record<Language, DashboardText> = {
       pending: "En Attente",
       found: "Trouvés"
     },
+    total: "Total",
+    today: "Aujourd'hui",
+    pending: "En Attente",
+    found: "Trouvés",
     addItem: "Ajouter un Objet",
     addLostItem: "Ajouter un Objet Perdu",
     noItems: "Aucun objet trouvé",
@@ -208,16 +383,17 @@ const dashboardText: Record<Language, DashboardText> = {
     formRoom: "Chambre",
     formSubmit: "Soumettre",
     charts: {
-      status: "Objets par Statut",
-      trend: "Tendance des Objets",
-      daily: "Objets Quotidiens"
+      status: "Statut",
+      trend: "Tendance",
+      daily: "Quotidien"
     },
-    pending: "En Attente",
-    found: "Trouvés",
+    status: "Statut",
+    trend: "Tendance",
+    daily: "Quotidien",
     markAsFound: "Marquer comme Trouvé",
-    editItem: "Modifier",
+    editItem: "Modifier l'Objet",
     editLostItem: "Modifier l'objet perdu",
-    deleteItem: "Supprimer",
+    deleteItem: "Supprimer l'Objet",
     deleteConfirmTitle: "Êtes-vous sûr ?",
     deleteConfirmYes: "Oui",
     deleteConfirmNo: "Non",
@@ -235,23 +411,78 @@ const dashboardText: Record<Language, DashboardText> = {
       itemFound: "Objet Trouvé",
       itemLost: "Objet Perdu",
     },
-    itemsForDate: "Objets pour",
-    search: {
-      placeholder: "Rechercher des objets...",
-      noResults: "Aucun résultat trouvé",
-      resultsCount: "{count} objets trouvés sur {dates} dates",
-      clearSearch: "Effacer la recherche",
+    itemList: {
+      title: 'Liste des Objets',
+      addItem: 'Ajouter un Objet',
+      markAsLost: 'Marquer comme Perdu',
+      markAsFound: 'Marquer comme Trouvé',
+      edit: 'Modifier',
+      delete: 'Supprimer',
+      addNewItem: 'Ajouter un Nouvel Objet',
+      addNewItemDescription: "Description du Nouvel Objet",
+      description: 'Description',
+      category: 'Catégorie',
+      selectCategory: 'Sélectionner une Catégorie',
+      location: 'Emplacement',
+      add: 'Ajouter',
+      editItem: 'Modifier l\'Objet',
+      editItemDescription: 'Description de l\'Objet',
+      found: 'Trouvé',
+      save: 'Enregistrer',
+      confirmDelete: 'Confirmer la Suppression',
+      search: {
+        placeholder: 'Rechercher',
+        noResults: 'Aucun resultat trouvé',
+        resultsCount: '{count} resultats pour {dates} dates',
+      }
     },
-    months: ["Janvier", "Février", "Mars", "Avril", "Mai", "Juin", "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"],
-    settings: "Paramètres",
-    settingsDescription: "Modifiez vos paramètres ici",
-    retentionTime: "Délai de suppression des objets",
-    saveSettings: "Enregistrer les paramètres",
-    day: "Jours",
-    month: "Mois",
-    year: "Ans",
+    categories: {
+      electronics: 'Electronique',
+      clothing: 'Vetements',
+      accessories: 'Accessoires',
+      documents: 'Documents',
+      jewelery: 'Bijoux',
+      luggage: 'Valise',
+      keys: 'Clefs',
+      cosmetics: 'Cosmétiques',
+      glasses: 'Lunettes',
+      medical: 'Médical',
+      other: 'Autre',
+    },
+    months: [
+      'Janvier',
+      'Fevrier',
+      'Mars',
+      'Avril',
+      'Mai',
+      'Juin',
+      'Juillet',
+      'Aout',
+      'Septembre',
+      'Octobre',
+      'Novembre',
+      'Decembre',
+    ],
+    settings: {
+      title: 'Paramètres',
+      description: 'Description',
+      export: 'Exporter',
+      import: 'Importer',
+      delete: 'Supprimer',
+      format: 'Format',
+      file: 'Fichier',
+      exportButton: 'Exporter',
+      importButton: 'Importer',
+      deleteConfirm: 'Êtes-vous sûr de vouloir supprimer tous les données?',
+      deleteAllButton: 'Supprimer Tout',
+    },
   },
   es: {
+    search: {
+      placeholder: "Buscar",
+      resultsCount: "{count} resultados para {dates} fechas",
+      noResults: "No se encontraron resultados",
+    },
     title: "Objetos Perdidos",
     stats: {
       total: "Total de Objetos",
@@ -259,25 +490,30 @@ const dashboardText: Record<Language, DashboardText> = {
       pending: "Pendientes",
       found: "Encontrados"
     },
+    total: "Total",
+    today: "Hoy",
+    pending: "Pendientes",
+    found: "Encontrados",
     addItem: "Añadir Objeto",
     addLostItem: "Añadir Objeto Perdido",
     noItems: "No se encontraron objetos",
     formTitle: "Título",
     formDesc: "Descripción",
     formLocation: "Ubicación",
-    formRoom: "Aula",
+    formRoom: "Habitación",
     formSubmit: "Enviar",
     charts: {
-      status: "Objetos por Estado",
-      trend: "Tendencia de Objetos",
-      daily: "Objetos Diarios"
+      status: "Estado",
+      trend: "Tendencia",
+      daily: "Diario"
     },
-    pending: "Pendientes",
-    found: "Encontrados",
+    status: "Estado",
+    trend: "Tendencia",
+    daily: "Diario",
     markAsFound: "Marcar como Encontrado",
-    editItem: "Editar",
+    editItem: "Editar Objeto",
     editLostItem: "Editar Objeto Perdido",
-    deleteItem: "Eliminar",
+    deleteItem: "Eliminar Objeto",
     deleteConfirmTitle: "¿Estás seguro?",
     deleteConfirmYes: "Sí",
     deleteConfirmNo: "No",
@@ -288,56 +524,116 @@ const dashboardText: Record<Language, DashboardText> = {
       title: "Notificaciones",
       noNotifications: "No hay nuevas notificaciones",
       clearAll: "Borrar Todo",
-      markAsSeen: "Marcar como visto",
+      markAsSeen: "Marcar como Visto",
       itemDeleted: "Objeto Eliminado",
       itemDeletedDetails: "Un objeto titulado '{title}' fue eliminado el {date}.",
-      itemStatusChanged: "Un objeto titulado '{title}' en la categoria '{category}' fue marcado como {status} el {date}.",
+      itemStatusChanged: "Un objeto titulado '{title}' en la categoría '{category}' fue marcado como {status} el {date}.",
       itemFound: "Objeto Encontrado",
       itemLost: "Objeto Perdido",
     },
-    itemsForDate: "Objetos para",
-    search: {
-      placeholder: "Buscar objetos...",
-      noResults: "No se encontraron resultados",
-      resultsCount: "{count} objetos encontrados en {dates} fechas",
-      clearSearch: "Borrar búsqueda",
+    itemList: {
+      title: 'Lista de Objetos',
+      addItem: 'Añadir Objeto',
+      markAsLost: 'Marcar como Perdido',
+      markAsFound: 'Marcar como Encontrado',
+      edit: 'Editar',
+      delete: 'Eliminar',
+      addNewItem: 'Añadir Nuevo Objeto',
+      addNewItemDescription: 'Descripción del Nuevo Objeto',
+      description: 'Descripción',
+      category: 'Categoría',
+      selectCategory: 'Seleccionar Categoría',
+      location: 'Ubicación',
+      add: 'Añadir',
+      editItem: 'Editar Objeto',
+      editItemDescription: 'Descripción del Objeto',
+      found: 'Encontrado',
+      save: 'Guardar',
+      confirmDelete: 'Confirmar Eliminación',
+      search: {
+        placeholder: 'Resultados',
+        noResults: 'No se encontraron resultados',
+        resultsCount: '{count} resultados para {dates} fechas',
+      }
     },
-    months: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-    settings: "Ajustes",
-    settingsDescription: "Cambia tus ajustes aqui",
-    retentionTime: "Tiempo de retención de objetos",
-    saveSettings: "Guardar Ajustes",
-    day: "Días",
-    month: "Meses",
-    year: "Años",
+    categories: {
+      electronics: 'Electronica',
+      clothing: 'Vestimenta',
+      accessories: 'Accesorios',
+      documents: 'Documentos',
+      jewelery: 'Joyas',
+      luggage: 'Mochila',
+      keys: 'Llaves',
+      cosmetics: 'Cosmeticos',
+      glasses: 'Lentes',
+      medical: 'Medicina',
+      other: 'Otro',
+    },
+    months: [
+      'Enero',
+      'Febrero',
+      'Marzo',
+      'Abril',
+      'Mayo',
+      'Junio',
+      'Julio',
+      'Agosto',
+      'Septiembre',
+      'Octubre',
+      'Noviembre',
+      'Diciembre',
+    ],
+    settings: {
+      title: 'Configuraciones',
+      description: 'Descripción',
+      export: 'Exportar',
+      import: 'Importar',
+      delete: 'Eliminar',
+      format: 'Formato',
+      file: 'Archivo',
+      exportButton: 'Exportar',
+      importButton: 'Importar',
+      deleteConfirm: 'Estás seguro de querer eliminar todos los datos?',
+      deleteAllButton: 'Eliminar Todo',
+    },
   },
   de: {
+    search: {
+      placeholder: "Suchen",
+      resultsCount: "{count} Ergebnisse für {dates} Tage",
+      noResults: "Keine Ergebnisse gefunden"
+    },
     title: "Verlorene Gegenstände",
     stats: {
-      total: "Gesamtanzahl",
+      total: "Gesamtanzahl der Gegenstände",
       today: "Heutige Gegenstände",
       pending: "Ausstehend",
       found: "Gefunden"
     },
+    total: "Gesamt",
+    today: "Heute",
+    pending: "Ausstehend",
+    found: "Gefunden",
     addItem: "Gegenstand hinzufügen",
-    addLostItem: "Verlorene Gegenstand hinzufügen",
+    addLostItem: "Verlorenen Gegenstand hinzufügen",
     noItems: "Keine Gegenstände gefunden",
     formTitle: "Titel",
     formDesc: "Beschreibung",
     formLocation: "Ort",
-    formRoom: "Raum",
+    formRoom: "Zimmer",
     formSubmit: "Absenden",
     charts: {
-      status: "Gegenstände nach Status",
-      trend: "Gegenstandstrend",
-      daily: "Tägliche Gegenstände"
+      status: "Status",
+      trend: "Trend",
+      daily: "Täglich"
     },
-    pending: "Ausstehend",
-    found: "Gefunden",
+    status: "Status",
+    trend: "Trend",
+    daily: "Täglich",
     markAsFound: "Als gefunden markieren",
-    editItem: "Bearbeiten",
-    editLostItem: "Verlorene Gegenstand bearbeiten",
-    deleteItem: "Löschen",
+    editItem: "Gegenstand bearbeiten",
+    editLostItem: "Verlorenen Gegenstand bearbeiten",
+    deleteItem: "Gegenstand löschen",
     deleteConfirmTitle: "Sind Sie sicher?",
     deleteConfirmYes: "Ja",
     deleteConfirmNo: "Nein",
@@ -347,29 +643,79 @@ const dashboardText: Record<Language, DashboardText> = {
     notifications: {
       title: "Benachrichtigungen",
       noNotifications: "Keine neuen Benachrichtigungen",
-      clearAll: "Alle löschen",
+      clearAll: "Alles löschen",
       markAsSeen: "Als gesehen markieren",
       itemDeleted: "Gegenstand gelöscht",
       itemDeletedDetails: "Ein Gegenstand mit dem Titel '{title}' wurde am {date} gelöscht.",
-      itemStatusChanged: "Ein Gegenstand mit dem Titel '{title}' in der Kategorie '{category}' wurde am {date} als '{status}' markiert.",
-      itemFound: "Gegenstand gefunden", 
-      itemLost: "Verlorene Gegenstand", 
+      itemStatusChanged: "Ein Gegenstand mit dem Titel '{title}' in der Kategorie '{category}' wurde am {date} als {status} markiert.",
+      itemFound: "Gegenstand gefunden",
+      itemLost: "Gegenstand verloren",
     },
-    itemsForDate: "Gegenstände für",
-    search: {
-      placeholder: "Gegenstände suchen...",
-      noResults: "Keine Ergebnisse gefunden",
-      resultsCount: "{count} Gegenstände gefunden über {dates} Daten",
-      clearSearch: "Suche löschen",
+    itemList: {
+      title: 'Gegenstandsliste',
+      addItem: 'Gegenstand hinzufügen',
+      markAsLost: 'Als verloren markieren',
+      markAsFound: 'Als gefunden markieren',
+      edit: 'Bearbeiten',
+      delete: 'Löschen',
+      addNewItem: 'Neuen Gegenstand hinzufügen',
+      addNewItemDescription: 'Beschreibung des neuen Gegenstands',
+      description: 'Beschreibung',
+      category: 'Kategorie',
+      selectCategory: 'Kategorie auswählen',
+      location: 'Ort',
+      add: 'Hinzufügen',
+      editItem: 'Gegenstand bearbeiten',
+      editItemDescription: 'Beschreibung des Gegenstands',
+      found: 'Gefunden',
+      save: 'Speichern',
+      confirmDelete: 'Löschen bestätigen',
+      search: {
+        placeholder: 'Suchen',
+        noResults: 'Keine Ergebnisse gefunden',
+        resultsCount: '{count} Ergebnisse für {dates} Tage',
+      }
     },
-    months: ["Januar", "Februar", "März", "April", "Mai", "Juni", "Juli", "August", "September", "Oktober", "November", "Dezember"],
-    settings: "Einstellungen",
-    settingsDescription: "Hier kannst du deine Einstellungen einstellen",
-    retentionTime: "Verlustzeit",
-    saveSettings: "Einstellungen speichern",
-    day: "Tage",
-    month: "Monate",
-    year: "Jahre",
+    categories: {
+      electronics: 'Elektronik',
+      clothing: 'Kleidung',
+      accessories: 'Zubehör',
+      documents: 'Dokumente',
+      jewelery: 'Schmuck',
+      luggage: 'Gepäck',
+      keys: 'Schlüssel',
+      cosmetics: 'Kosmetik',
+      glasses: 'Glas',
+      medical: 'Medizin',
+      other: 'Sonstiges'
+    },
+    months: [
+      'Januar',
+      'Februar',
+      'März',
+      'April',
+      'Mai',
+      'Juni',
+      'Juli',
+      'August',
+      'September',
+      'Oktober',
+      'November',
+      'Dezember',
+    ],
+    settings: {
+      title: 'Einstellungen',
+      description: 'Beschreibung',
+      export: 'Exportieren',
+      import: 'Importieren',
+      delete: 'Löschen',
+      format: 'Format',
+      file: 'Datei',
+      exportButton: 'Exportieren',
+      importButton: 'Importieren',
+      deleteConfirm: 'Sind Sie sicher, dass Sie alle Daten löschen wollen?',
+      deleteAllButton: 'Alles löschen',
+    },
   },
 };
 
