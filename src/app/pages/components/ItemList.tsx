@@ -72,8 +72,6 @@ interface ItemListProps {
 
 export default function ItemList({
   t,
-  date,
-  filter,
   filteredItems,
   addItem,
   editItem,
@@ -401,7 +399,7 @@ export default function ItemList({
                 <Checkbox
                   id="edit-found"
                   checked={editingItem.found}
-                  onCheckedChange={(checked) =>
+                  onCheckedChange={(checked: boolean) =>
                     setEditingItem({
                       ...editingItem,
                       found: checked as boolean,

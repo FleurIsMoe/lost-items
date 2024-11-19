@@ -15,7 +15,6 @@ interface LanguageSelectorProps {
 }
 
 export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
-  currentLanguage,
   onLanguageChange,
 }) => {
   const languages: { [key in Language]: string } = {

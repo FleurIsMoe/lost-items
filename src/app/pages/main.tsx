@@ -5,30 +5,21 @@ import {
   format,
   isSameDay,
   parseISO,
-  startOfDay,
   subDays,
   addDays,
 } from "date-fns";
-import { Bell, Menu, Search, Settings } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { useLanguage } from "@/lib/languageHandler";
 import dashboardText from "@/locales/dashboardText";
 import {
   LostItem,
   Notification,
   FilterState,
-  SearchResult,
   Language,
 } from "@/lib/localization/types";
 import Header from "@/app/pages/components/Header";
 import Sidebar from "@/app/pages/components/Sidebar";
 import Dashboard from "@/app/pages/components/Dashboard";
 import ItemList from "@/app/pages/components/ItemList";
-import NotificationMenu from "@/app/pages/components/NotificationMenu";
-import SearchBar from "@/app/pages/components/SearchBar";
 import SettingsDialog from "@/app/pages/components/SettingsDialog";
 
 export default function LostItemsComponent() {
@@ -46,7 +37,6 @@ export default function LostItemsComponent() {
     end: addDays(new Date(), 3),
   });
   const [searchQuery, setSearchQuery] = useState("");
-  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [highlightedItemId, setHighlightedItemId] = useState<string | null>(
     null
   );
@@ -163,10 +153,14 @@ export default function LostItemsComponent() {
     );
   };
 
-  const addNotification = (notification: Notification) => {
+  const addNotification = (notification: Omit<Notification, 'category'> & { status: string }) => {
+    const newNotification: Notification = {
+      ...notification,
+      category: notification.status as 'new' | 'found' | 'notFound' | 'deleted'
+    };
     setNotifications((prevNotifications) => [
       ...prevNotifications,
-      notification,
+      newNotification,
     ]);
   };
 
@@ -187,22 +181,22 @@ export default function LostItemsComponent() {
         setIsMobileMenuOpen={setIsMobileMenuOpen}
       />
       <main className="flex-1 flex flex-col overflow-hidden">
-        <Header
-          t={t}
-          language={language}
-          changeLanguage={handleLanguageChange}
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          isSettingsOpen={isSettingsOpen}
-          setIsSettingsOpen={setIsSettingsOpen}
-          notifications={notifications}
-          setNotifications={setNotifications}
-          items={items}
-          onSearchResultClick={(item) => {
-            setDate(item.date);
-            setHighlightedItemId(item.id);
-          }}
-        />
+      <Header
+        t={t}
+        language={language}
+        changeLanguage={handleLanguageChange}
+        searchQuery={searchQuery}
+        setSearchQuery={setSearchQuery}
+        isSettingsOpen={isSettingsOpen}
+        setIsSettingsOpen={setIsSettingsOpen}
+        notifications={notifications}
+        setNotifications={setNotifications}
+        items={items}
+        onSearchResultClick={(item) => {
+          setDate(item.date);
+          setHighlightedItemId(item.id);
+        }}
+      />
         <div className="flex-1 overflow-auto p-6">
           <Dashboard
             t={t}

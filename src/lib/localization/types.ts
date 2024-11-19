@@ -17,7 +17,8 @@ export interface Notification {
   itemId: string;
   title: string;
   date: Date;
-  status: "pending" | "found" | "deleted";
+  category: 'new' | 'found' | 'notFound' | 'deleted';
+  status: string;
   details?: string;
 }
 

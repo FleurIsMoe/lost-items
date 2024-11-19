@@ -1,10 +1,10 @@
 import React from "react";
-import { Bell, Search, Settings } from "lucide-react";
+import { Settings } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { LanguageSelector } from "@/components/LanguageSelector";
 import NotificationMenu from "@/app/pages/components/NotificationMenu";
 import SearchBar from "@/app/pages/components/SearchBar";
-import { LostItem, Notification, Language } from "@/lib/localization/types";
+import { LostItem, Language, Notification } from "@/lib/localization/types";
 
 interface HeaderProps {
   t: any;
@@ -26,7 +26,6 @@ export default function Header({
   changeLanguage,
   searchQuery,
   setSearchQuery,
-  isSettingsOpen,
   setIsSettingsOpen,
   notifications,
   setNotifications,
@@ -47,7 +46,7 @@ export default function Header({
           onSearchResultClick={onSearchResultClick}
         />
         <LanguageSelector
-          currentLanguage={language as Language}
+          currentLanguage={language}
           onLanguageChange={changeLanguage}
         />
         <Button

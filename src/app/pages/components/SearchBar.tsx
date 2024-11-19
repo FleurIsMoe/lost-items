@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect } from "react";
 import { Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { LostItem, SearchResult } from "@/lib/localization/types";
 
 interface SearchBarProps {
