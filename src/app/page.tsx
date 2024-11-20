@@ -1,7 +1,5 @@
-import dynamic from "next/dynamic";
+import ClientWrapper from "./ClientWrapper";
 
-const DynamicLostItemsComponent = dynamic(() => import("@/app/pages/main"));
-
-export default function LostItemsComponentClient() {
-  return <DynamicLostItemsComponent />;
+export default function Page() {
+  return <ClientWrapper />;
 }

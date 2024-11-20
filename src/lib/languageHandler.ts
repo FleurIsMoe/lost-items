@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 
 export type Language = 'en' | 'it';
 
@@ -11,16 +11,20 @@ const CACHE_DURATION = 60 * 60 * 1000;
 export const useLanguage = () => {
   const [language, setLanguage] = useState<Language>('en');
 
-  useEffect(() => {
-    const storedLanguage = localStorage.getItem('preferredLanguage') as Language | null;
-    if (storedLanguage) {
-      setLanguage(storedLanguage);
-    } else {
-      detectAndSetLanguage();
+  const applyLanguageFromCountryCode = useCallback((countryCode: string) => {
+    let detectedLanguage: Language = 'en';
+    switch (countryCode.toLowerCase()) {
+      case 'it':
+        detectedLanguage = 'it';
+        break;
+      default:
+        detectedLanguage = 'en';
     }
+    setLanguage(detectedLanguage);
+    localStorage.setItem('preferredLanguage', detectedLanguage);
   }, []);
 
-  const detectAndSetLanguage = async () => {
+  const detectAndSetLanguage = useCallback(async () => {
     const cachedData = localStorage.getItem('locationData');
     const cachedTimestamp = localStorage.getItem('locationDataTimestamp');
 
@@ -38,20 +42,18 @@ export const useLanguage = () => {
         setLanguage('en');
       }
     }
-  };
+  }, [applyLanguageFromCountryCode]);
 
-  const applyLanguageFromCountryCode = (countryCode: string) => {
-    let detectedLanguage: Language = 'en';
-    switch (countryCode.toLowerCase()) {
-      case 'it':
-        detectedLanguage = 'it';
-        break;
-      default:
-        detectedLanguage = 'en';
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const storedLanguage = localStorage.getItem('preferredLanguage') as Language | null;
+      if (storedLanguage) {
+        setLanguage(storedLanguage);
+      } else {
+        detectAndSetLanguage();
+      }
     }
-    setLanguage(detectedLanguage);
-    localStorage.setItem('preferredLanguage', detectedLanguage);
-  };
+  }, [detectAndSetLanguage]);
 
   const changeLanguage = (newLanguage: Language) => {
     setLanguage(newLanguage);

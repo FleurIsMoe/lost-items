@@ -43,8 +43,8 @@ export default function LostItemsComponent() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   useEffect(() => {
-    // Load data from localStorage
-    const loadData = () => {
+    // Load data from localStorage only on client side
+    if (typeof window !== 'undefined') {
       const storedItems = localStorage.getItem("items");
       if (storedItems) {
         setItems(
@@ -57,14 +57,15 @@ export default function LostItemsComponent() {
       if (storedNotifications) {
         setNotifications(JSON.parse(storedNotifications));
       }
-    };
-    loadData();
+    }
   }, []);
 
   useEffect(() => {
-    // Save data to localStorage
-    localStorage.setItem("items", JSON.stringify(items));
-    localStorage.setItem("notifications", JSON.stringify(notifications));
+    // Save data to localStorage only on client side
+    if (typeof window !== 'undefined') {
+      localStorage.setItem("items", JSON.stringify(items));
+      localStorage.setItem("notifications", JSON.stringify(notifications));
+    }
   }, [items, notifications]);
 
   const handleDateChange = (newDate: Date | undefined) => {

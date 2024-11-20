@@ -92,11 +92,12 @@ export function SettingsDialog({
     
     if (autoDelete.enabled) {
       const checkAndDeleteOldItems = () => {
-        const now = new Date();
+        const currentDate = new Date();
         const filteredItems = items.filter(item => {
+          if (item.found) return true;
+          
           const itemDate = new Date(item.date);
-          const diff = now.getTime() - itemDate.getTime();
-          const days = diff / (1000 * 60 * 60 * 24);
+          const days = Math.floor((currentDate.getTime() - itemDate.getTime()) / (1000 * 60 * 60 * 24));
           
           let threshold = autoDelete.value;
           if (autoDelete.unit === 'months') threshold *= 30;
@@ -115,7 +116,7 @@ export function SettingsDialog({
       const interval = setInterval(checkAndDeleteOldItems, 24 * 60 * 60 * 1000); // Check daily
       return () => clearInterval(interval);
     }
-  }, [autoDelete, items]);
+  }, [autoDelete, items, setItems]);
 
   const handleExport = () => {
     let exportData: string;
