@@ -20,7 +20,7 @@ import Header from "@/app/pages/components/Header";
 import Sidebar from "@/app/pages/components/Sidebar";
 import Dashboard from "@/app/pages/components/Dashboard";
 import ItemList from "@/app/pages/components/ItemList";
-import SettingsDialog from "@/app/pages/components/SettingsDialog";
+import { SettingsDialog } from "@/app/pages/components/SettingsDialog";
 
 export default function LostItemsComponent() {
   const { language, changeLanguage } = useLanguage();
@@ -100,7 +100,11 @@ export default function LostItemsComponent() {
       itemId: newItem.id,
       title: newItem.title,
       date: new Date(),
-      status: "pending",
+      status: "new",
+      details: t.notifications.newItemAdded
+        .replace("{title}", newItem.title)
+        .replace("{category}", newItem.category)
+        .replace("{date}", format(new Date(), "PPp")),
     });
   };
 
@@ -135,11 +139,11 @@ export default function LostItemsComponent() {
         itemId: id,
         title: newStatus ? t.notifications.itemFound : t.notifications.itemLost,
         date: new Date(),
-        status: newStatus ? "found" : "pending",
+        status: newStatus ? "found" : "notFound",
         details: t.notifications.itemStatusChanged
           .replace("{title}", updatedItem.title)
           .replace("{category}", updatedItem.category)
-          .replace("{status}", newStatus ? t.found : t.pending)
+          .replace("{status}", newStatus ? t.notifications.categories.found : t.notifications.categories.notFound)
           .replace("{date}", format(new Date(), "PPp")),
       });
     }
@@ -224,13 +228,21 @@ export default function LostItemsComponent() {
               category: t.itemList.category,
               selectCategory: t.itemList.selectCategory,
               location: t.itemList.location,
+              room: t.itemList.room,
               add: t.itemList.add,
               editItem: t.itemList.editItem,
               editItemDescription: t.itemList.editItemDescription,
               found: t.itemList.found,
               save: t.itemList.save,
               confirmDelete: t.itemList.confirmDelete,
+              deleteConfirmTitle: t.itemList.deleteConfirmTitle,
+              deleteConfirmMessage: t.itemList.deleteConfirmMessage,
+              deleteConfirmNo: t.itemList.deleteConfirmNo,
+              deleteConfirmYes: t.itemList.deleteConfirmYes,
+              date: t.itemList.date,
+              search: t.itemList.search,
               categories: t.categories,
+              placeholders: t.itemList.placeholders,
             }}
             date={date}
             filter={filter}
@@ -245,21 +257,7 @@ export default function LostItemsComponent() {
         </div>
       </main>
       <SettingsDialog
-        t={{
-          settings: {
-            title: t.settings.title,
-            description: t.settings.description,
-            export: t.settings.export,
-            import: t.settings.import,
-            delete: t.settings.delete,
-            format: t.settings.format,
-            file: t.settings.file,
-            exportButton: t.settings.exportButton,
-            importButton: t.settings.importButton,
-            deleteConfirm: t.settings.deleteConfirm,
-            deleteAllButton: t.settings.deleteAllButton,
-          },
-        }}
+        t={{ settings: t.settings }}
         isOpen={isSettingsOpen}
         onClose={() => setIsSettingsOpen(false)}
         items={items}

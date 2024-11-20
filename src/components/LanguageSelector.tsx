@@ -15,13 +15,11 @@ interface LanguageSelectorProps {
 }
 
 export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
+  currentLanguage,
   onLanguageChange,
 }) => {
   const languages: { [key in Language]: string } = {
     en: "English",
-    es: "Español",
-    fr: "Français",
-    de: "Deutsch",
     it: "Italiano",
   };
 
@@ -41,6 +39,7 @@ export const LanguageSelector: React.FC<LanguageSelectorProps> = ({
           <DropdownMenuItem
             key={code}
             onClick={() => onLanguageChange(code as Language)}
+            className={currentLanguage === code ? "font-medium" : ""}
           >
             {name}
           </DropdownMenuItem>

@@ -27,4 +27,4 @@ export interface SearchResult {
   matches: ("title" | "description" | "location")[];
 }
 
-export type Language = 'en' | 'fr' | 'es' | 'de' | 'it';
+export type Language = 'en' | 'it';

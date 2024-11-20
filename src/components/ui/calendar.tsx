@@ -30,6 +30,7 @@ interface CalendarProps {
   className?: string;
   specialDates?: Date[];
   theme?: "white" | "dark";
+  itemCounts?: { [date: string]: number };
 }
 
 const localeMap = {
@@ -46,6 +47,7 @@ export function Calendar({
   className,
   specialDates = [],
   theme = "white",
+  itemCounts = {},
 }: CalendarProps) {
   const [currentMonth, setCurrentMonth] = React.useState(new Date());
   const containerRef = React.useRef<HTMLDivElement>(null);
@@ -104,6 +106,8 @@ export function Calendar({
     containerSize.height / 25
   );
   const monthFontSize = fontSize * 1.3;
+  const badgeFontSize = fontSize * 0.9;
+  const badgeSize = fontSize * 1.4;
 
   return (
     <div
@@ -166,13 +170,20 @@ export function Calendar({
           const isCurrentMonth = isSameMonth(day, currentMonth);
           const isCurrentDay = isToday(day);
           const isSpecial = isSpecialDate(day);
+          const dateKey = format(day, "yyyy-MM-dd");
+          const itemCount = itemCounts[dateKey] || 0;
 
           const scaleFactor = 1 + containerSize.width / 2000;
+          const badgeScaleFactor = isSelected ? (1 + containerSize.width / 4000) : 1;
 
           const dayStyle: React.CSSProperties = {
             transform: isSelected ? `scale(${scaleFactor})` : "scale(1)",
             zIndex: isSelected ? 10 : "auto",
             color: themeColors.text,
+            position: "relative",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
           };
 
           if (!isCurrentMonth) {
@@ -180,8 +191,7 @@ export function Calendar({
           }
 
           if (isSelected) {
-            dayStyle.backgroundColor =
-              themeColors.calendarSelectedDayBackground;
+            dayStyle.backgroundColor = themeColors.calendarSelectedDayBackground;
             dayStyle.color = themeColors.calendarSelectedDayText;
           } else if (isCurrentDay) {
             dayStyle.backgroundColor = themeColors.calendarTodayBackground;
@@ -193,20 +203,43 @@ export function Calendar({
           }
 
           return (
-            <Button
+            <div
               key={day.toString()}
-              onClick={() => handleDateSelect(day)}
-              variant="ghost"
-              className={cn(
-                "p-1 flex items-center justify-center aspect-square text-sm",
-                "hover:bg-transparent"
-              )}
-              style={{
-                ...dayStyle,
-              }}
+              className="relative aspect-square p-0.5"
+              data-calendar-day
+              data-date={format(day, "yyyy-MM-dd")}
             >
-              {format(day, "d", { locale: localeMap[language] })}
-            </Button>
+              <Button
+                onClick={() => handleDateSelect(day)}
+                variant="ghost"
+                className={cn(
+                  "h-10 w-10 p-0 rounded-md",
+                  "hover:bg-transparent"
+                )}
+                style={{
+                  ...dayStyle,
+                }}
+              >
+                {format(day, "d", { locale: localeMap[language] })}
+                {itemCount > 0 && (
+                  <div
+                    className="absolute flex items-center justify-center rounded-full bg-blue-500 text-white"
+                    style={{
+                      fontSize: `${badgeFontSize}px`,
+                      minWidth: `${badgeSize}px`,
+                      height: `${badgeSize}px`,
+                      padding: `0 ${fontSize * 0.3}px`,
+                      transform: `translate(30%, -30%) scale(${badgeScaleFactor})`,
+                      transformOrigin: "center",
+                      top: 0,
+                      right: 0,
+                    }}
+                  >
+                    {itemCount > 99 ? "99+" : itemCount}
+                  </div>
+                )}
+              </Button>
+            </div>
           );
         })}
       </div>

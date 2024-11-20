@@ -1,12 +1,6 @@
 import { useState, useEffect } from 'react';
 
-export type Language =
-  | 'en'
-  | 'it'
-  | 'fr'
-  | 'es'
-  | 'de';
-
+export type Language = 'en' | 'it';
 
 interface LocationData {
   country_code: string;
@@ -52,14 +46,8 @@ export const useLanguage = () => {
       case 'it':
         detectedLanguage = 'it';
         break;
-      case 'fr':
-        detectedLanguage = 'fr';
-        break;
-      case 'es':
-        detectedLanguage = 'es';
-        break;
-      case 'de':
-        detectedLanguage = 'de';
+      default:
+        detectedLanguage = 'en';
     }
     setLanguage(detectedLanguage);
     localStorage.setItem('preferredLanguage', detectedLanguage);

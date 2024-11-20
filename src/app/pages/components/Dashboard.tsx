@@ -138,6 +138,14 @@ export default function Dashboard({
               mode="single"
               selected={date}
               onSelect={(newDate) => newDate && onDateChange(newDate)}
+              itemCounts={React.useMemo(() => {
+                const counts: { [date: string]: number } = {};
+                items.forEach((item) => {
+                  const dateKey = format(item.date, "yyyy-MM-dd");
+                  counts[dateKey] = (counts[dateKey] || 0) + 1;
+                });
+                return counts;
+              }, [items])}
               className="rounded-md border-0 w-full h-full"
             />
           </CardContent>
