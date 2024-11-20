@@ -513,5 +513,3 @@ CAT=${item.category}
     </Dialog>
   );
 }
-
-export { SettingsDialog };
